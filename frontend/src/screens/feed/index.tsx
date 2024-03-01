@@ -87,7 +87,10 @@ export default function FeedScreen({ route }: { route: FeedScreenRouteProp }) {
   const renderItem = ({ item, index }: { item: Post; index: number }) => {
     return (
       <View
-        style={{flex : 1, height: feedItemHeight}}
+        style={{
+          height: feedItemHeight,
+          backgroundColor: "black",
+        }}
       >
         <PostSingle
           item={item}

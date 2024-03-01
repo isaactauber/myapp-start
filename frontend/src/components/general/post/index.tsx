@@ -107,7 +107,7 @@ export const PostSingle = forwardRef<PostSingleHandles, { item: Post }>(
         {user && <PostSingleOverlay user={user} post={item} />}
         <Video
           ref={ref}
-          style={ StyleSheet.absoluteFill }
+          style={styles.container}
           resizeMode={ResizeMode.COVER}
           shouldPlay={false}
           isLooping
