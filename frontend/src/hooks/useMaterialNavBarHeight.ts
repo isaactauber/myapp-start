@@ -6,7 +6,9 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 const useMaterialNavBarHeight = (withoutBottomTabs: boolean) => {
   const { bottom, top } = useSafeAreaInsets();
 
-  return bottom - Math.floor(top) + (withoutBottomTabs ? 24 : 104);
+  // TODO: dynamically redner based on height of Tab.Navigator 
+  // return bottom - Math.floor(top) + (withoutBottomTabs ? 24 : 104);
+  return 114;
 };
 
 export default useMaterialNavBarHeight;

@@ -23,7 +23,8 @@ export default function HomeScreen() {
 
   return (
     <Tab.Navigator
-      barStyle={{ backgroundColor: "black" }}
+      // TODO: height not set and dynamically calculated in useMaterialNavBarHeight.ts
+      barStyle={{ backgroundColor: "black", height: 114 }}
       initialRouteName="feed"
     >
       <Tab.Screen
