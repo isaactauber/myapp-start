@@ -1,87 +1,29 @@
-import { useNavigation } from "@react-navigation/native";
 import React, { useState } from "react";
-import {
-  ActivityIndicator,
-  Image,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View
-} from "react-native";
-import styles from "./styles";
+import { View, Text, TextInput, TouchableOpacity, ActivityIndicator, StyleSheet } from "react-native";
 import { Feather } from "@expo/vector-icons";
 import { useDispatch } from "react-redux";
 import { createEvent } from "../../redux/slices/eventSlice";
-// import DateTimePicker from 'react-native-ui-datepicker';
-import dayjs from 'dayjs';
-
-import { RouteProp } from "@react-navigation/native";
-import { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import { RootStackParamList } from "../../navigation/main";
-import { AppDispatch } from "../../redux/store";
+import { useNavigation } from "@react-navigation/native";
 import { HomeStackParamList } from "../../navigation/home";
-
-// interface SaveEventScreenProps {
-//   route: RouteProp<RootStackParamList, "saveEvent">;
-// }
+import styles from "./styles";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 
 export default function SaveEventScreen() {
   const [description, setDescription] = useState("");
   const [eventName, setEventName] = useState("");
-  // const [eventDate, setEventDate] = useState(new Date());
   const [requestRunning, setRequestRunning] = useState(false);
-  const navigation =
-    useNavigation<NativeStackNavigationProp<HomeStackParamList>>();
+  const navigation = useNavigation<NativeStackNavigationProp<HomeStackParamList>>();
+  const dispatch = useDispatch();
 
-  const dispatch: AppDispatch = useDispatch();
   const handleSaveEvent = () => {
     setRequestRunning(true);
-    // console.log("saving event...");
-    dispatch(
-      createEvent({
-        description,
-        eventName,
-        // eventDate,
-      }),
-    )
-      .then(() => navigation.navigate("feed"))
-      .catch(() => setRequestRunning(false));
+    dispatch<any>(createEvent({ description, eventName }))
+     .then(() => navigation.navigate("feed"))
+     .catch(() => setRequestRunning(false));
   };
-
-  if (requestRunning) {
-    return (
-      <View style={styles.uploadingContainer}>
-        <ActivityIndicator color="red" size="large" />
-      </View>
-    );
-  }
-
-  // const handleDateChange = (event: Event, selectedDate?: Date) => {
-  //   if (selectedDate) {
-  //     console.log("saving date");
-  //     setEventDate(selectedDate);
-  //   }
-  // };
 
   return (
     <View style={styles.container}>
-      <View style={styles.buttonsContainer}>
-        <TouchableOpacity
-          onPress={() => navigation.goBack()}
-          style={styles.cancelButton}
-        >
-          <Feather name="x" size={24} color="black" />
-          <Text style={styles.cancelButtonText}>Cancel</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity
-          onPress={() => handleSaveEvent()}
-          style={styles.postButton}
-        >
-          <Feather name="corner-left-up" size={24} color="white" />
-          <Text style={styles.postButtonText}>Post</Text>
-        </TouchableOpacity>
-      </View>
       <View style={styles.formContainer}>
         <TextInput
           style={styles.inputText}
@@ -89,26 +31,41 @@ export default function SaveEventScreen() {
           multiline
           onChangeText={(text) => setEventName(text)}
           placeholder="Event name"
+          placeholderTextColor="#666"
         />
         <TextInput
-          style={styles.inputText}
+          style={[styles.inputText, styles.descriptionInput]}
           maxLength={150}
           multiline
           onChangeText={(text) => setDescription(text)}
           placeholder="Describe your event"
+          placeholderTextColor="#666"
         />
-        {/* <DateTimePicker
-          mode="single"
-          date={eventDate}
-          onChange={handleDateChange as any}
-          
-        /> */}
-        {/* <Image
-          style={styles.mediaPreview}
-          source={{ uri: route.params.source }}
-        /> */}
       </View>
-      <View style={styles.spacer} />
+
+      <View style={styles.buttonsContainer}>
+        <TouchableOpacity
+          onPress={() => navigation.goBack()}
+          style={[styles.button, styles.cancelButton]}
+        >
+          <Feather name="x" size={20} color="#333" />
+          <Text style={styles.buttonText}>Cancel</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          onPress={handleSaveEvent}
+          style={[styles.button, styles.saveButton]}
+        >
+          {requestRunning ? (
+            <ActivityIndicator color="#fff" />
+          ) : (
+            <>
+              <Feather name="corner-left-up" size={20} color="#fff" />
+              <Text style={styles.buttonText}>Save</Text>
+            </>
+          )}
+        </TouchableOpacity>
+      </View>
     </View>
   );
 }
