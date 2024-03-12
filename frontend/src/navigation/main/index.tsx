@@ -21,9 +21,13 @@ export type RootStackParamList = {
   userPosts: { creator: string; profile: boolean };
   profileOther: { initialUserId: string };
   savePost: { source: string; sourceThumb: string };
+  saveEvent: undefined;
   editProfile: undefined;
   editProfileField: { title: string; field: string; value: string };
   chatSingle: { chatId?: string; contactId?: string };
+  profileHome: { initialUserId: string };
+  cameraHome: undefined;
+  chatHome: undefined
 };
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -57,36 +61,14 @@ export default function Route() {
               component={HomeScreen}
               options={{ headerShown: false }}
             />
+            {/* CameraScreen did not work well being nested in a Screen.Navigator, 
+              keeping savePost here for now */}
             <Stack.Screen
               name="savePost"
               component={SavePostScreen}
               options={{ headerShown: false }}
             />
-            <Stack.Screen
-              name="userPosts"
-              component={FeedScreen}
-              options={{ headerShown: false }}
-            />
-            <Stack.Screen
-              name="profileOther"
-              component={ProfileScreen}
-              options={{ headerShown: false }}
-            />
-            <Stack.Screen
-              name="editProfile"
-              component={EditProfileScreen}
-              options={{ headerShown: false }}
-            />
-            <Stack.Screen
-              name="editProfileField"
-              component={EditProfileFieldScreen}
-              options={{ headerShown: false }}
-            />
-            <Stack.Screen
-              name="chatSingle"
-              component={ChatSingleScreen}
-              options={{ headerShown: false }}
-            />
+
           </>
         )}
       </Stack.Navigator>

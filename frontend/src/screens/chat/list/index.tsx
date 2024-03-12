@@ -6,6 +6,11 @@ import ChatListItem from "../../../components/chat/list/item";
 import { useSelector } from "react-redux";
 import { RootState } from "../../../redux/store";
 import { Chat } from "../../../../types";
+import { RootStackParamList } from "../../../navigation/main";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import ChatSingleScreen from "../single";
+
+const Stack = createNativeStackNavigator<RootStackParamList>();
 
 const ChatScreen = () => {
   const chats = useSelector((state: RootState) => state.chat.list);
@@ -14,17 +19,36 @@ const ChatScreen = () => {
     return <ChatListItem chat={item} />;
   };
 
+  const ChatHome = () => {
+    return (
+      <SafeAreaView>
+        <NavBarGeneral leftButton={{ display: false }} title="Direct messages" />
+        <FlatList
+          data={chats}
+          removeClippedSubviews
+          renderItem={renderItem}
+          keyExtractor={(item) => item.id}
+        />
+        <Text></Text>
+      </SafeAreaView>
+    );
+  }
+
   return (
-    <SafeAreaView>
-      <NavBarGeneral leftButton={{ display: false }} title="Direct messages" />
-      <FlatList
-        data={chats}
-        removeClippedSubviews
-        renderItem={renderItem}
-        keyExtractor={(item) => item.id}
+    <Stack.Navigator
+      initialRouteName="chatHome"
+    >
+      <Stack.Screen
+        name="chatHome"
+        component={ChatHome}
+        options={{ headerShown: false }}
       />
-      <Text></Text>
-    </SafeAreaView>
+      <Stack.Screen
+        name="chatSingle"
+        component={ChatSingleScreen}
+        options={{ headerShown: false }}
+      />
+    </Stack.Navigator>
   );
 };
 

@@ -8,6 +8,14 @@ export interface Post {
   creation: string;
 }
 
+export interface Event {
+  id: string;
+  creator: string;
+  name: string;
+  description: string;
+  creation: string;
+}
+
 export interface Comment {
   id: string;
   creator: string;
