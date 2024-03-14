@@ -15,6 +15,7 @@ import FeedScreen from "../../screens/feed";
 import ProfileScreen from "../../screens/profile";
 import ChatSingleScreen from "../../screens/chat/single";
 
+// TODO split this up
 export type RootStackParamList = {
   home: undefined;
   auth: undefined;
@@ -22,6 +23,8 @@ export type RootStackParamList = {
   profileOther: { initialUserId: string };
   savePost: { source: string; sourceThumb: string };
   saveEvent: undefined;
+  saveEventDetails: undefined;
+  saveEventDateTime: { name: string; description: string };
   editProfile: undefined;
   editProfileField: { title: string; field: string; value: string };
   chatSingle: { chatId?: string; contactId?: string };

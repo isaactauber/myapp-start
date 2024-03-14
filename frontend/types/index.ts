@@ -12,6 +12,7 @@ export interface Event {
   id: string;
   creator: string;
   name: string;
+  date: Date;
   description: string;
   creation: string;
 }

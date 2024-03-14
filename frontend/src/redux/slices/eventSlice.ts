@@ -32,36 +32,24 @@ export const createEvent = createAsyncThunk(
     {
         description,
         eventName,
-        // eventDate,
+        date,
     }: {
       description: string;
       eventName: string;
-    //   eventDate: Date;
+      date: Date;
     },
     { rejectWithValue },
   ) => {
     if (FIREBASE_AUTH.currentUser) {
       try {
         const storageEventId = uuid();
-        // const [videoDownloadUrl, thumbnailDownloadUrl] = await Promise.all([
-        //   saveMediaToStorage(
-        //     video,
-        //     `post/${FIREBASE_AUTH.currentUser.uid}/${storagePostId}/video`,
-        //   ),
-        //   saveMediaToStorage(
-        //     thumbnail,
-        //     `post/${FIREBASE_AUTH.currentUser.uid}/${storagePostId}/thumbnail`,
-        //   ),
-        // ]
-        // );
 
         await addDoc(collection(FIREBASE_DB, "event"), {
           creator: FIREBASE_AUTH.currentUser.uid,
           description,
           eventName,
-        //   eventDate,
-        //   likesCount: 0,
-        //   commentsCount: 0,
+          date,
+
           creation: serverTimestamp(),
         });
       } catch (error) {
