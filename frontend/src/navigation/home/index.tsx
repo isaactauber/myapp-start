@@ -12,7 +12,6 @@ import SaveEventScreen from "../../screens/saveEvent";
 export type HomeStackParamList = {
   feed: undefined;
   Discover: undefined;
-  AddPost: undefined;
   AddEvent: undefined;
   Inbox: undefined;
   Me: { initialUserId: string };
@@ -48,17 +47,8 @@ export default function HomeScreen() {
         }}
       />
       <Tab.Screen
-        name="AddPost"
-        component={CameraScreen}
-        options={{
-          tabBarIcon: ({ color }) => (
-            <Feather name="plus-square" size={24} color={color} />
-          ),
-        }}
-      />
-      <Tab.Screen
         name="AddEvent"
-        component={SaveEventScreen}
+        component={CameraScreen}
         options={{
           tabBarIcon: ({ color }) => (
             <Feather name="plus-square" size={24} color={color} />

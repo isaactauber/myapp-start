@@ -14,6 +14,8 @@ import Modal from "../../components/modal";
 import FeedScreen from "../../screens/feed";
 import ProfileScreen from "../../screens/profile";
 import ChatSingleScreen from "../../screens/chat/single";
+import SaveEventDetailsScreen from "../../screens/saveEvent";
+import SaveEventDateTime from "../../screens/saveEventDateTime";
 
 // TODO split this up
 export type RootStackParamList = {
@@ -22,9 +24,14 @@ export type RootStackParamList = {
   userPosts: { creator: string; profile: boolean };
   profileOther: { initialUserId: string };
   savePost: { source: string; sourceThumb: string };
-  saveEvent: undefined;
-  saveEventDetails: undefined;
-  saveEventDateTime: { name: string; description: string };
+  saveEventDetails: { source: string; sourceThumb: string };
+  saveEventDateTime: { 
+    source: string;
+    sourceThumb: string;
+    name: string;
+    description: string;
+    eventType: string;
+  };
   editProfile: undefined;
   editProfileField: { title: string; field: string; value: string };
   chatSingle: { chatId?: string; contactId?: string };
@@ -67,11 +74,15 @@ export default function Route() {
             {/* CameraScreen did not work well being nested in a Screen.Navigator, 
               keeping savePost here for now */}
             <Stack.Screen
-              name="savePost"
-              component={SavePostScreen}
+              name="saveEventDetails"
+              component={SaveEventDetailsScreen}
               options={{ headerShown: false }}
             />
-
+            <Stack.Screen
+              name="saveEventDateTime"
+              component={SaveEventDateTime}
+              options={{ headerShown: false }}
+            />
           </>
         )}
       </Stack.Navigator>

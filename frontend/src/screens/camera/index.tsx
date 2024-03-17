@@ -76,7 +76,7 @@ export default function CameraScreen() {
           console.warn("sourceval {}", source);
           let sourceThumb = await generateThumbnail(source);
           if (sourceThumb) {
-            navigation.navigate("savePost", { source, sourceThumb });
+            navigation.navigate("saveEventDetails", { source, sourceThumb });
           }
         }
       } catch (error) {
@@ -102,7 +102,7 @@ export default function CameraScreen() {
     if (!result.canceled) {
       const sourceThumb = await generateThumbnail(result.assets[0].uri);
       if (sourceThumb) {
-        navigation.navigate("savePost", {
+        navigation.navigate("saveEventDetails", {
           source: result.assets[0].uri,
           sourceThumb,
         });
