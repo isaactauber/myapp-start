@@ -5,14 +5,14 @@ import { getStorage } from "firebase/storage";
 
 //! REPLACE VALUES BELOW WITH YOUR OWN FIREBASE CONFIG
 const firebaseConfig = {
-  apiKey: "AIzaSyCAyadKsPY4wapmcXv8_cspB57G6fBcvfg",
-  authDomain: "itauber-project.firebaseapp.com",
-  databaseURL: "https://itauber-project-default-rtdb.firebaseio.com",
-  projectId: "itauber-project",
-  storageBucket: "itauber-project.appspot.com",
-  messagingSenderId: "769777157556",
-  appId: "1:769777157556:web:b62e31461efc60fcbc1ee1",
-  measurementId: "G-2HXJKY9TT0"
+  apiKey: "AIzaSyB8keIn0wYG6p_18cNBGx4t-56F6TNPEk0",
+  authDomain: "usher-backend.firebaseapp.com",
+  databaseURL: "https://usher-backend-default-rtdb.firebaseio.com",
+  projectId: "usher-backend",
+  storageBucket: "usher-backend.appspot.com",
+  messagingSenderId: "60089943989",
+  appId: "1:60089943989:web:0f8d8f4ce41851efbc7bfc",
+  measurementId: "G-BR5EMKCZ76"
 };
 
 export const FIREBASE_APP = initializeApp(firebaseConfig);
