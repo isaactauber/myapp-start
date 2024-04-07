@@ -6,10 +6,7 @@ import styles from "./styles";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { RootStackParamList } from "../../navigation/main";
-import SaveEventDateTime from "../saveEventDateTime";
 import { Picker } from "@react-native-picker/picker";
-
-const Stack = createNativeStackNavigator<RootStackParamList>();
 
 interface SaveEventDetailsProps {
   route: RouteProp<RootStackParamList, "saveEventDetails">;
@@ -20,6 +17,7 @@ enum EventTypes {
   "Dance",
   "Theater",
   "Music",
+  "Sports",
   "Fashion",
   "Art"
 }
@@ -28,12 +26,13 @@ export default function SaveEventDetailsScreen({ route }: SaveEventDetailsProps)
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
   const [eventType, setEventType] = useState('');
-  const [source, setSource] = route.params.source;
-  const [sourceThumb, setSourceThumb] = route.params.sourceThumb;
+  let dateTimes: Date[] = [];
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
 
   const handleSaveEvent = () => {
-    navigation.navigate("saveEventDateTime", { source, sourceThumb, name, description, eventType });
+    const source = route.params.source;
+    const sourceThumb = route.params.sourceThumb;
+    navigation.navigate("saveEventDateTime", { source, sourceThumb, name, description, eventType, dateTimes });
   };
 
   return (
@@ -43,7 +42,7 @@ export default function SaveEventDetailsScreen({ route }: SaveEventDetailsProps)
         maxLength={150}
         multiline={true}
         value={name}
-        onChangeText={setName} // Directly pass setName
+        onChangeText={setName}
         placeholder="Event name"
         placeholderTextColor="#666"
       />
@@ -52,7 +51,7 @@ export default function SaveEventDetailsScreen({ route }: SaveEventDetailsProps)
         maxLength={150}
         multiline={true}
         value={description}
-        onChangeText={setDescription} // Directly pass setDescription
+        onChangeText={setDescription}
         placeholder="Describe your event"
         placeholderTextColor="#666"
       />
@@ -60,11 +59,11 @@ export default function SaveEventDetailsScreen({ route }: SaveEventDetailsProps)
       <Picker
         selectedValue={eventType}
         onValueChange={(itemValue) => setEventType(itemValue)}
-        style={styles.inputText} // might want to create a specific style for the Picker
+        style={styles.inputText}
       >
-        {Object.values(EventTypes).map((value) => (
-          <Picker.Item label={value.toString()} value={value.toString()} />
-        ))}
+      {Object.values(EventTypes).filter((value) => typeof value === 'string').map((value) => (
+        <Picker.Item key={value} label={value.toString()} value={value} />
+      ))}
       </Picker>
       
       <View style={styles.buttonsContainer}>

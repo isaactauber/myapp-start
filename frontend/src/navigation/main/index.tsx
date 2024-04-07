@@ -1,19 +1,13 @@
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { userAuthStateListener } from "../../redux/slices/authSlice"; // Make sure the path is correct
+import { userAuthStateListener } from "../../redux/slices/authSlice";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import AuthScreen from "../../screens/auth";
 import { AppDispatch, RootState } from "../../redux/store";
 import HomeScreen from "../home";
 import { View } from "react-native";
-import SavePostScreen from "../../screens/savePost";
-import EditProfileScreen from "../../screens/profile/edit";
-import EditProfileFieldScreen from "../../screens/profile/edit/field";
 import Modal from "../../components/modal";
-import FeedScreen from "../../screens/feed";
-import ProfileScreen from "../../screens/profile";
-import ChatSingleScreen from "../../screens/chat/single";
 import SaveEventDetailsScreen from "../../screens/saveEvent";
 import SaveEventDateTime from "../../screens/saveEventDateTime";
 
@@ -31,6 +25,7 @@ export type RootStackParamList = {
     name: string;
     description: string;
     eventType: string;
+    dateTimes: Date[];
   };
   editProfile: undefined;
   editProfileField: { title: string; field: string; value: string };
@@ -72,7 +67,7 @@ export default function Route() {
               options={{ headerShown: false }}
             />
             {/* CameraScreen did not work well being nested in a Screen.Navigator, 
-              keeping savePost here for now */}
+              keeping saveEvent screens here for now */}
             <Stack.Screen
               name="saveEventDetails"
               component={SaveEventDetailsScreen}

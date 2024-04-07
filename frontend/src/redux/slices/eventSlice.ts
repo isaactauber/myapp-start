@@ -8,11 +8,8 @@ import {
   serverTimestamp,
   where,
 } from "firebase/firestore";
-import { saveMediaToStorage } from "../../services/utils";
-import uuid from "uuid-random";
 import { PayloadAction, createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { Event } from "../../../types";
-import dayjs from 'dayjs';
 
 interface EventState {
   loading: boolean;
@@ -26,40 +23,39 @@ const initialState: EventState = {
   currentUserEvents: null,
 };
 
-export const createEvent = createAsyncThunk(
+interface CreateEventReturnType {
+  eventId: string;
+}
+
+interface CreateEventArgs {
+  description: string;
+  eventName: string;
+  dateTimes: Date[];
+  eventType: string;
+}
+
+export const createEvent = createAsyncThunk<CreateEventReturnType, CreateEventArgs>(
   "event/create",
-  async (
-    {
+  async ({ description, eventName, dateTimes, eventType }, { rejectWithValue }) => {
+    try {
+      if (!FIREBASE_AUTH.currentUser) {
+        throw new Error("User not authenticated");
+      }
+
+      const docRef = await addDoc(collection(FIREBASE_DB, "event"), {
+        creator: FIREBASE_AUTH.currentUser.uid,
         description,
         eventName,
-        date,
-    }: {
-      description: string;
-      eventName: string;
-      date: Date;
-    },
-    { rejectWithValue },
-  ) => {
-    if (FIREBASE_AUTH.currentUser) {
-      try {
-        const storageEventId = uuid();
-
-        await addDoc(collection(FIREBASE_DB, "event"), {
-          creator: FIREBASE_AUTH.currentUser.uid,
-          description,
-          eventName,
-          date,
-
-          creation: serverTimestamp(),
-        });
-      } catch (error) {
-        console.error("Error creating event: ", error);
-        return rejectWithValue(error);
-      }
-    } else {
-      return rejectWithValue(new Error("User not authenticated"));
+        dateTimes,
+        eventType,
+        creation: serverTimestamp(),
+      });
+      
+      return { eventId: docRef.id };
+    } catch (error) {
+      return rejectWithValue(error);
     }
-  },
+  }
 );
 
 export const getEventsByUser = createAsyncThunk(

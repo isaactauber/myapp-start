@@ -2,7 +2,7 @@ export interface Post {
   id: string;
   creator: string;
   media: string[];
-  description: string;
+  event: Event;
   likesCount: number;
   commentsCount: number;
   creation: string;
@@ -12,7 +12,8 @@ export interface Event {
   id: string;
   creator: string;
   name: string;
-  date: Date;
+  eventType: string;
+  dateTimes: Date[];
   description: string;
   creation: string;
 }
