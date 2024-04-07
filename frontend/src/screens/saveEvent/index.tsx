@@ -4,9 +4,9 @@ import { Feather } from "@expo/vector-icons";
 import { RouteProp, useNavigation } from "@react-navigation/native";
 import styles from "./styles";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { RootStackParamList } from "../../navigation/main";
 import { Picker } from "@react-native-picker/picker";
+import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
 
 interface SaveEventDetailsProps {
   route: RouteProp<RootStackParamList, "saveEventDetails">;
@@ -26,13 +26,14 @@ export default function SaveEventDetailsScreen({ route }: SaveEventDetailsProps)
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
   const [eventType, setEventType] = useState('');
+  const [location, setLocation] = useState('');
   let dateTimes: Date[] = [];
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
 
   const handleSaveEvent = () => {
     const source = route.params.source;
     const sourceThumb = route.params.sourceThumb;
-    navigation.navigate("saveEventDateTime", { source, sourceThumb, name, description, eventType, dateTimes });
+    navigation.navigate("saveEventDateTime", { source, sourceThumb, name, description, eventType, location, dateTimes });
   };
 
   return (
@@ -65,6 +66,18 @@ export default function SaveEventDetailsScreen({ route }: SaveEventDetailsProps)
         <Picker.Item key={value} label={value.toString()} value={value} />
       ))}
       </Picker>
+
+      <GooglePlacesAutocomplete
+        placeholder='Enter Location'
+        fetchDetails={true}
+        onPress={(data, details = null) => {
+          setLocation(data.description);
+        }}
+        query={{
+          key: 'AIzaSyAN9ZnOOX2Qb21Xuq6LcY1nZ8MV_hwq34c',
+          language: 'en',
+        }}
+      />
       
       <View style={styles.buttonsContainer}>
         <TouchableOpacity onPress={() => navigation.goBack()} style={[styles.button, styles.cancelButton]}>

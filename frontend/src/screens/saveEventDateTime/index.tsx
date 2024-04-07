@@ -53,6 +53,7 @@ export default function SaveEventDateTime({ route }: SaveEventDateTimeProps) {
           description: route.params.description,
           dateTimes: dateTimes,
           eventType: route.params.eventType,
+          location: route.params.location
         })
       );
   
@@ -91,6 +92,7 @@ export default function SaveEventDateTime({ route }: SaveEventDateTimeProps) {
       name: route.params.name,
       description: route.params.description,
       eventType: route.params.eventType,
+      location: route.params.location,
       dateTimes: dateTimes });
   };
 

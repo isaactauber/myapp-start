@@ -25,6 +25,7 @@ export type RootStackParamList = {
     name: string;
     description: string;
     eventType: string;
+    location: string;
     dateTimes: Date[];
   };
   editProfile: undefined;

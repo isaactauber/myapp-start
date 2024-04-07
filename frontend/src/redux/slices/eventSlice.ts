@@ -32,11 +32,12 @@ interface CreateEventArgs {
   eventName: string;
   dateTimes: Date[];
   eventType: string;
+  location: string;
 }
 
 export const createEvent = createAsyncThunk<CreateEventReturnType, CreateEventArgs>(
   "event/create",
-  async ({ description, eventName, dateTimes, eventType }, { rejectWithValue }) => {
+  async ({ description, eventName, dateTimes, eventType, location }, { rejectWithValue }) => {
     try {
       if (!FIREBASE_AUTH.currentUser) {
         throw new Error("User not authenticated");
@@ -48,9 +49,10 @@ export const createEvent = createAsyncThunk<CreateEventReturnType, CreateEventAr
         eventName,
         dateTimes,
         eventType,
+        location,
         creation: serverTimestamp(),
       });
-      
+
       return { eventId: docRef.id };
     } catch (error) {
       return rejectWithValue(error);

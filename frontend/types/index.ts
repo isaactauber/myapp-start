@@ -15,6 +15,7 @@ export interface Event {
   eventType: string;
   dateTimes: Date[];
   description: string;
+  location: string;
   creation: string;
 }
 
