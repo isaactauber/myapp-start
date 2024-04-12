@@ -19,6 +19,15 @@ export interface Event {
   creation: string;
 }
 
+export interface Company {
+  id: string;
+  creator: string;
+  name: string;
+  companyType: string;
+  description: string;
+  creation: string;
+}
+
 export interface Comment {
   id: string;
   creator: string;

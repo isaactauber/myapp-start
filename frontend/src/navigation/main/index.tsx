@@ -30,6 +30,7 @@ export type RootStackParamList = {
   };
   editProfile: undefined;
   editProfileField: { title: string; field: string; value: string };
+  createHostingCompany: undefined;
   chatSingle: { chatId?: string; contactId?: string };
   profileHome: { initialUserId: string };
   cameraHome: undefined;
