@@ -1,4 +1,5 @@
 import { StyleSheet } from "react-native";
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -64,6 +65,19 @@ const styles = StyleSheet.create({
     marginLeft: 5,
     color: "white",
     fontWeight: "bold",
+    fontSize: 16,
+  },
+  // New styles for DatePicker
+  datePickerButton: {
+    padding: 10,
+    backgroundColor: '#007bff',
+    borderRadius: 5,
+    marginBottom: 20,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  datePickerButtonText: {
+    color: '#ffffff',
     fontSize: 16,
   },
 });
