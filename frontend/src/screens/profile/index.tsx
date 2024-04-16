@@ -19,6 +19,7 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import FeedScreen from "../feed";
 import EditProfileScreen from "./edit";
 import EditProfileFieldScreen from "./edit/field";
+import CreateHostingCompanyScreen from "../createHostingCompany";
 import { FIREBASE_AUTH } from "../../../firebaseConfig";
 
 
@@ -93,6 +94,11 @@ export default function ProfileScreen({
         <Stack.Screen
           name="editProfileField"
           component={EditProfileFieldScreen}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="createHostingCompany"
+          component={CreateHostingCompanyScreen}
           options={{ headerShown: false }}
         />
         <Stack.Screen
