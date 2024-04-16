@@ -20,6 +20,7 @@ import FeedScreen from "../feed";
 import EditProfileScreen from "./edit";
 import EditProfileFieldScreen from "./edit/field";
 import CreateHostingCompanyScreen from "../createHostingCompany";
+import { FIREBASE_AUTH } from "../../../firebaseConfig";
 
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
