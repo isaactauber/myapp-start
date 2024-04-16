@@ -22,7 +22,7 @@ export interface Event {
 export interface Company {
   id: string;
   creator: string;
-  name: string;
+  companyName: string;
   companyType: string;
   description: string;
   creation: string;

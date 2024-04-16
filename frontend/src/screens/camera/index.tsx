@@ -17,6 +17,7 @@ import styles from "./styles";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useNavigation } from "@react-navigation/native";
 import { RootStackParamList } from "../../navigation/main";
+import { FIREBASE_AUTH } from "../../../firebaseConfig";
 
 /**
  * Function that renders a component responsible showing
@@ -73,10 +74,9 @@ export default function CameraScreen() {
         if (videoRecordPromise) {
           const data = await videoRecordPromise;
           const source = data.uri;
-          console.warn("sourceval {}", source);
           let sourceThumb = await generateThumbnail(source);
           if (sourceThumb) {
-            navigation.navigate("saveEventDetails", { source, sourceThumb });
+            navigation.navigate("saveEventCompany", { source, sourceThumb, initialUserId: FIREBASE_AUTH.currentUser?.uid ?? "" });
           }
         }
       } catch (error) {
@@ -98,13 +98,13 @@ export default function CameraScreen() {
       aspect: [16, 9],
       quality: 1,
     });
-    // console.warn("sourceval {}", result.assets[0].uri);
     if (!result.canceled) {
       const sourceThumb = await generateThumbnail(result.assets[0].uri);
       if (sourceThumb) {
-        navigation.navigate("saveEventDetails", {
+        navigation.navigate("saveEventCompany", {
           source: result.assets[0].uri,
           sourceThumb,
+          initialUserId: FIREBASE_AUTH.currentUser?.uid ?? ""
         });
       }
     }

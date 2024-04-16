@@ -49,6 +49,7 @@ export default function SaveEventDateTime({ route }: SaveEventDateTimeProps) {
       // Dispatch createEvent and assert the return type
       const actionResult = await dispatch(
         createEvent({
+          eventCompany: route.params.eventCompany,
           eventName: route.params.name,
           description: route.params.description,
           dateTimes: dateTimes,
@@ -60,7 +61,6 @@ export default function SaveEventDateTime({ route }: SaveEventDateTimeProps) {
       // Use a type guard to safely access the payload
       if ('payload' in actionResult && actionResult.payload) {
         const { eventId } = actionResult.payload as CreateEventReturnType;
-        console.log("route.params.source: ", route.params.source);
         await dispatch(
           createPost({
             event: eventId,
@@ -89,6 +89,7 @@ export default function SaveEventDateTime({ route }: SaveEventDateTimeProps) {
     rootNavigation.navigate("saveEventDateTime", { 
       source: route.params.source, 
       sourceThumb: route.params.sourceThumb,
+      eventCompany: route.params.eventCompany,
       name: route.params.name,
       description: route.params.description,
       eventType: route.params.eventType,

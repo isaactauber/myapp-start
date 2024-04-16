@@ -10,6 +10,7 @@ import { View } from "react-native";
 import Modal from "../../components/modal";
 import SaveEventDetailsScreen from "../../screens/saveEvent";
 import SaveEventDateTime from "../../screens/saveEventDateTime";
+import SaveEventCompanyScreen from "../../screens/saveEventCompany";
 
 // TODO split this up
 export type RootStackParamList = {
@@ -18,10 +19,20 @@ export type RootStackParamList = {
   userPosts: { creator: string; profile: boolean };
   profileOther: { initialUserId: string };
   savePost: { source: string; sourceThumb: string };
-  saveEventDetails: { source: string; sourceThumb: string };
+  saveEventCompany: { 
+    source: string;
+    sourceThumb: string;
+    initialUserId: string
+  };
+  saveEventDetails: { 
+    source: string;
+    sourceThumb: string;
+    eventCompany: string
+  };
   saveEventDateTime: { 
     source: string;
     sourceThumb: string;
+    eventCompany: string;
     name: string;
     description: string;
     eventType: string;
@@ -70,6 +81,11 @@ export default function Route() {
             />
             {/* CameraScreen did not work well being nested in a Screen.Navigator, 
               keeping saveEvent screens here for now */}
+            <Stack.Screen
+              name="saveEventCompany"
+              component={SaveEventCompanyScreen}
+              options={{ headerShown: false }}
+            />
             <Stack.Screen
               name="saveEventDetails"
               component={SaveEventDetailsScreen}
