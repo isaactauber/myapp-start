@@ -12,6 +12,7 @@ import {
   FeedStackParamList,
 } from "../../navigation/feed";
 import useMaterialNavBarHeight from "../../hooks/useMaterialNavBarHeight";
+import { useIsFocused } from '@react-navigation/native';
 
 type FeedScreenRouteProp =
   | RouteProp<RootStackParamList, "userPosts">
@@ -22,83 +23,53 @@ interface PostViewToken extends ViewToken {
   item: Post;
 }
 
-/**
- * Component that renders a list of posts meant to be
- * used for the feed screen.
- *
- * On start make fetch for posts then use a flatList
- * to display/control the posts.
- */
 export default function FeedScreen({ route }: { route: FeedScreenRouteProp }) {
-  const { setCurrentUserProfileItemInView } = useContext(
-    CurrentUserProfileItemInViewContext,
-  );
-
-  const { creator, profile } = route.params as {
-    creator: string;
-    profile: boolean;
-  };
-
+  const isFocused = useIsFocused();
+  const { setCurrentUserProfileItemInView } = useContext(CurrentUserProfileItemInViewContext);
+  const { creator, profile } = route.params as { creator: string; profile: boolean; };
   const [posts, setPosts] = useState<Post[]>([]);
   const mediaRefs = useRef<Record<string, PostSingleHandles | null>>({});
+  const [viewableItems, setViewableItems] = useState<Set<string>>(new Set());
 
   useEffect(() => {
     if (profile && creator) {
-      getPostsByUserId(creator).then((posts) => setPosts(posts));
+      getPostsByUserId(creator).then(setPosts);
     } else {
-      getFeed().then((posts) => setPosts(posts));
+      getFeed().then(setPosts);
     }
-  }, []);
+  }, [profile, creator]);
 
-  /**
-   * Called any time a new post is shown when a user scrolls
-   * the FlatList, when this happens we should start playing
-   * the post that is viewable and stop all the others
-   */
-  const onViewableItemsChanged = useRef(
-    ({ changed }: { changed: PostViewToken[] }) => {
-      changed.forEach((element) => {
-        // console.log("change: " + element.item.description + " - " + element.isViewable);
-        const cell = mediaRefs.current[element.key];
-
-        if (cell) {
-          if (element.isViewable) {
-            if (!profile && setCurrentUserProfileItemInView) {
-              setCurrentUserProfileItemInView(element.item.creator);
-            }
-            cell.play();
-          } else {
-            cell.stop();
-          }
+  useEffect(() => {
+    Object.keys(mediaRefs.current).forEach((key) => {
+      const postHandle = mediaRefs.current[key];
+      if (postHandle) {
+        if (isFocused && viewableItems.has(key)) {
+          postHandle.play();
+        } else {
+          postHandle.stop();
         }
-      });
-    },
-  );
+      }
+    });
+  }, [isFocused, viewableItems]);
 
-  const feedItemHeight =
-    Dimensions.get("window").height - useMaterialNavBarHeight(profile);
-  /**
-   * renders the item shown in the FlatList
-   *
-   * @param {Object} item object of the post
-   * @param {Integer} index position of the post in the FlatList
-   * @returns
-   */
-  const renderItem = ({ item, index }: { item: Post; index: number }) => {
-    return (
-      <View
-        style={{
-          height: feedItemHeight,
-          backgroundColor: "black",
-        }}
-      >
-        <PostSingle
-          item={item}
-          ref={(PostSingeRef) => (mediaRefs.current[item.id] = PostSingeRef)}
-        />
-      </View>
-    );
-  };
+  const onViewableItemsChanged = useRef(({ viewableItems }: { viewableItems: PostViewToken[] }) => {
+    const newViewableItems = new Set(viewableItems.map(item => item.item.id));
+    setViewableItems(newViewableItems);
+    viewableItems.forEach(item => {
+      const postHandle = mediaRefs.current[item.item.id];
+      if (postHandle) {
+        postHandle.play();
+      }
+    });
+  });
+
+  const feedItemHeight = Dimensions.get("window").height - useMaterialNavBarHeight(profile);
+
+  const renderItem = ({ item, index }: { item: Post; index: number }) => (
+    <View style={{ height: feedItemHeight, backgroundColor: "black" }}>
+      <PostSingle item={item} ref={(PostSingeRef) => (mediaRefs.current[item.id] = PostSingeRef)} />
+    </View>
+  );
 
   return (
     <View style={styles.container}>
@@ -109,7 +80,7 @@ export default function FeedScreen({ route }: { route: FeedScreenRouteProp }) {
         maxToRenderPerBatch={2}
         removeClippedSubviews
         viewabilityConfig={{
-          itemVisiblePercentThreshold: 0,
+          itemVisiblePercentThreshold: 50
         }}
         renderItem={renderItem}
         pagingEnabled
