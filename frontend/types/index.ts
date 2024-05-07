@@ -2,9 +2,29 @@ export interface Post {
   id: string;
   creator: string;
   media: string[];
-  description: string;
+  event: Event;
   likesCount: number;
   commentsCount: number;
+  creation: string;
+}
+
+export interface Event {
+  id: string;
+  creator: string;
+  name: string;
+  eventType: string;
+  dateTimes: Date[];
+  description: string;
+  location: string;
+  creation: string;
+}
+
+export interface Company {
+  id: string;
+  creator: string;
+  companyName: string;
+  companyType: string;
+  description: string;
   creation: string;
 }
 
