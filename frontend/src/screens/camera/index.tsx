@@ -16,7 +16,7 @@ import { Feather } from "@expo/vector-icons";
 import styles from "./styles";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useNavigation } from "@react-navigation/native";
-import { RootStackParamList } from "../../navigation/main";
+import { MainStackParamList } from "../../navigation/main";
 import { FIREBASE_AUTH } from "../../../firebaseConfig";
 
 /**
@@ -40,7 +40,7 @@ export default function CameraScreen() {
   const isFocused = useIsFocused();
 
   const navigation =
-    useNavigation<NativeStackNavigationProp<RootStackParamList>>();
+    useNavigation<NativeStackNavigationProp<MainStackParamList>>();
   useEffect(() => {
     (async () => {
       const cameraStatus = await requestCameraPermissionsAsync();

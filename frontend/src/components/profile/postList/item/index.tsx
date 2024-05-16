@@ -3,11 +3,11 @@ import styles from "./styles";
 import { Post } from "../../../../../types";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import { RootStackParamList } from "../../../../navigation/main";
+import { ProfileStackParamList } from "../../../../screens/profile";
 
 export default function ProfilePostListItem({ item }: { item: Post | null }) {
   const navigation =
-    useNavigation<NativeStackNavigationProp<RootStackParamList>>();
+    useNavigation<NativeStackNavigationProp<ProfileStackParamList>>();
 
   return (
     item && (

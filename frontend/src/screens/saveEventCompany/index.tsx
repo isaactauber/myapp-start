@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useState } from "react";
 import { RouteProp, useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { Feather } from "@expo/vector-icons";
-import { RootStackParamList } from "../../navigation/main";
+import { MainStackParamList } from "../../navigation/main";
 import { Company } from "../../../types";
 import { useUser } from "../../hooks/useUser";
 import { CurrentUserProfileItemInViewContext } from "../../navigation/feed";
@@ -12,13 +12,13 @@ import { Picker } from "@react-native-picker/picker";
 import styles from './styles';
 
 interface SaveEventCompanyProps {
-  route: RouteProp<RootStackParamList, "saveEventCompany">;
+  route: RouteProp<MainStackParamList, "saveEventCompany">;
 }
 
 export default function SaveEventCompanyScreen({ route }: SaveEventCompanyProps) {
   const [userCompanies, setUserCompanies] = useState<Company[]>([]);
   const [eventCompany, setEventCompany] = useState('');
-  const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
+  const navigation = useNavigation<NativeStackNavigationProp<MainStackParamList>>();
 
   const { initialUserId } = route.params;
   const providerUserId = useContext(CurrentUserProfileItemInViewContext);
@@ -48,7 +48,7 @@ export default function SaveEventCompanyScreen({ route }: SaveEventCompanyProps)
       <Text>Select a Company:</Text>
       <Picker
         selectedValue={eventCompany}
-        onValueChange={(itemValue) => setEventCompany(itemValue)}
+        onValueChange={(itemValue: React.SetStateAction<string>) => setEventCompany(itemValue)}
         style={styles.inputText}
       >
       {userCompanies.map((company, index) => (
