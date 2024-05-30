@@ -1,6 +1,7 @@
 export interface Post {
   id: string;
-  creator: string;
+  creatorUser: string;
+  creatorHost: string;
   media: string[];
   event: Event;
   likesCount: number;
@@ -10,7 +11,8 @@ export interface Post {
 
 export interface Event {
   id: string;
-  creator: string;
+  creatorUser: string;
+  creatorHost: string;
   name: string;
   eventType: string;
   dateTimes: Date[];
@@ -19,11 +21,11 @@ export interface Event {
   creation: string;
 }
 
-export interface Company {
+export interface Host {
   id: string;
   creator: string;
-  companyName: string;
-  companyType: string;
+  hostName: string;
+  hostType: string;
   description: string;
   creation: string;
 }

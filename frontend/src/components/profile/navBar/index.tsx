@@ -4,7 +4,7 @@ import { Feather } from "@expo/vector-icons";
 import { RootState } from "../../../redux/store";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import { RootStackParamList } from "../../../navigation/main";
+import { HostViewStackParamList } from "../../../navigation/host";
 
 export default function ProfileNavBar({
   user,
@@ -12,7 +12,7 @@ export default function ProfileNavBar({
   user: RootState["auth"]["currentUser"];
 }) {
   const navigation =
-    useNavigation<NativeStackNavigationProp<RootStackParamList>>();
+    useNavigation<NativeStackNavigationProp<HostViewStackParamList>>();
   return (
     user && (
       <View style={styles.container}>
@@ -20,7 +20,7 @@ export default function ProfileNavBar({
           <Feather name="search" size={20} />
         </TouchableOpacity>
         <Text style={styles.text}>{user.email}</Text>
-        <TouchableOpacity onPress={(currentUser) => navigation.navigate("createHostingCompany")}>
+        <TouchableOpacity onPress={(currentUser) => navigation.navigate("createHost")}>
           <Feather name="plus" size={24} />
         </TouchableOpacity>
       </View>

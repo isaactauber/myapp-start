@@ -10,14 +10,15 @@ import { View } from "react-native";
 import Modal from "../../components/modal";
 import SaveEventDetailsScreen from "../../screens/saveEvent";
 import SaveEventDateTime from "../../screens/saveEventDateTime";
-import SaveEventCompanyScreen from "../../screens/saveEventCompany";
+import SaveEventHostScreen from "../../screens/saveHost";
 import HostViewScreen from "../host";
+import CreateHostScreen from "../../screens/createHost";
 
 export type MainStackParamList = {
   auth: undefined;
   userView: undefined;
   hostView: { hostId: string, userId: string };
-  saveEventCompany: { 
+  saveEventHost: { 
     source: string;
     sourceThumb: string;
     initialUserId: string
@@ -25,54 +26,20 @@ export type MainStackParamList = {
   saveEventDetails: { 
     source: string;
     sourceThumb: string;
-    eventCompany: string
+    eventHost: string
   };
   saveEventDateTime: { 
     source: string;
     sourceThumb: string;
-    eventCompany: string;
+    eventHost: string;
     name: string;
     description: string;
     eventType: string;
     location: string;
     dateTimes: Date[];
   };
+  createHost: undefined;
 }
-
-// export type RootStackParamList = {
-//   home: undefined;
-//   auth: undefined;
-//   userPosts: { creator: string; profile: boolean };
-//   profileOther: { initialUserId: string };
-//   savePost: { source: string; sourceThumb: string };
-//   saveEventCompany: { 
-//     source: string;
-//     sourceThumb: string;
-//     initialUserId: string
-//   };
-//   saveEventDetails: { 
-//     source: string;
-//     sourceThumb: string;
-//     eventCompany: string
-//   };
-//   saveEventDateTime: { 
-//     source: string;
-//     sourceThumb: string;
-//     eventCompany: string;
-//     name: string;
-//     description: string;
-//     eventType: string;
-//     location: string;
-//     dateTimes: Date[];
-//   };
-//   editProfile: undefined;
-//   editProfileField: { title: string; field: string; value: string };
-//   createHostingCompany: undefined;
-//   chatSingle: { chatId?: string; contactId?: string };
-//   profileHome: { initialUserId: string };
-//   cameraHome: undefined;
-//   chatHome: undefined
-// };
 
 const Stack = createNativeStackNavigator<MainStackParamList>();
 
@@ -119,8 +86,8 @@ export default function Route() {
             {/* CameraScreen did not work well being nested in a Screen.Navigator, 
               keeping saveEvent screens here for now */}
             <Stack.Screen
-              name="saveEventCompany"
-              component={SaveEventCompanyScreen}
+              name="saveEventHost"
+              component={SaveEventHostScreen}
               options={{ headerShown: false }}
             />
             <Stack.Screen
@@ -132,7 +99,12 @@ export default function Route() {
               name="saveEventDateTime"
               component={SaveEventDateTime}
               options={{ headerShown: false }}
-            /> 
+            />
+            <Stack.Screen
+              name="createHost"
+              component={CreateHostScreen}
+              options={{ headerShown: false }}
+            />
           </>
         )}
       </Stack.Navigator>

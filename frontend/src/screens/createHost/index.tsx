@@ -6,16 +6,16 @@ import styles from "./styles";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { MainStackParamList } from "../../navigation/main";
 import { Picker } from "@react-native-picker/picker";
-import { createCompany } from "../../redux/slices/companySlice";
+import { createHost } from "../../redux/slices/hostSlice";
 import { AppDispatch } from "../../redux/store";
 import { useDispatch } from "react-redux";
 import { HostViewStackParamList } from "../../navigation/host";
 
-interface CreateHostingCompanyProps {
-  route: RouteProp<HostViewStackParamList, "createHostingCompany">;
+interface CreateHostProps {
+  route: RouteProp<HostViewStackParamList, "createHost">;
 }
 
-enum CompanyType {
+enum HostType {
   "Stand Up Comedy",
   "Dance",
   "Theater",
@@ -25,19 +25,19 @@ enum CompanyType {
   "Art"
 }
 
-export default function CreateHostingCompanyScreen({ route }: CreateHostingCompanyProps) {
+export default function CreateHostScreen({ route }: CreateHostProps) {
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
-  const [companyType, setCompanyType] = useState('');
+  const [hostType, setHostType] = useState('');
   const navigation = useNavigation<NativeStackNavigationProp<MainStackParamList>>();
   const dispatch: AppDispatch = useDispatch();
 
-  const handleSaveCompany = async () => {
+  const handleSaveHost = async () => {
     await dispatch(
-      createCompany({
-        companyName: name,
+      createHost({
+        hostName: name,
         description: description,
-        companyType: companyType,
+        hostType: hostType,
       })
     );
 
@@ -52,7 +52,7 @@ export default function CreateHostingCompanyScreen({ route }: CreateHostingCompa
         multiline={true}
         value={name}
         onChangeText={setName}
-        placeholder="Company name"
+        placeholder="Host name"
         placeholderTextColor="#666"
       />
       <TextInput
@@ -61,16 +61,16 @@ export default function CreateHostingCompanyScreen({ route }: CreateHostingCompa
         multiline={true}
         value={description}
         onChangeText={setDescription}
-        placeholder="Describe your company"
+        placeholder="Describe your host"
         placeholderTextColor="#666"
       />
 
       <Picker
-        selectedValue={companyType}
-        onValueChange={(itemValue) => setCompanyType(itemValue)}
+        selectedValue={hostType}
+        onValueChange={(itemValue) => setHostType(itemValue)}
         style={styles.inputText}
       >
-      {Object.values(CompanyType).filter((value) => typeof value === 'string').map((value) => (
+      {Object.values(HostType).filter((value) => typeof value === 'string').map((value) => (
         <Picker.Item key={value} label={value.toString()} value={value} />
       ))}
       </Picker>
@@ -81,7 +81,7 @@ export default function CreateHostingCompanyScreen({ route }: CreateHostingCompa
           <Text style={[styles.buttonText, { color: '#333' }]}>Cancel</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity onPress={handleSaveCompany} style={[styles.button, styles.saveButton]}>
+        <TouchableOpacity onPress={handleSaveHost} style={[styles.button, styles.saveButton]}>
           <Feather name="check" size={20} color="#fff" />
           <Text style={styles.buttonText}>Save</Text>
         </TouchableOpacity>

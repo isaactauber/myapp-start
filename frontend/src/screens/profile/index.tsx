@@ -14,7 +14,6 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import FeedScreen from "../feed";
 import EditProfileScreen from "./edit";
 import EditProfileFieldScreen from "./edit/field";
-import CreateHostingCompanyScreen from "../createHostingCompany";
 import { HostViewStackParamList } from "../../navigation/host";
 
 
@@ -24,7 +23,6 @@ export type ProfileStackParamList = {
   editProfile: undefined;
   editProfileField: { title: string; field: string; value: string };
   profileHome: { initialUserId: string };
-  createHostingCompany: undefined;
 };
 
 const Stack = createNativeStackNavigator<ProfileStackParamList>();
@@ -98,11 +96,6 @@ export default function ProfileScreen({
         <Stack.Screen
           name="editProfileField"
           component={EditProfileFieldScreen}
-          options={{ headerShown: false }}
-        />
-        <Stack.Screen
-          name="createHostingCompany"
-          component={CreateHostingCompanyScreen}
           options={{ headerShown: false }}
         />
         <Stack.Screen

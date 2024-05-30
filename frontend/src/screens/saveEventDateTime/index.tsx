@@ -49,7 +49,7 @@ export default function SaveEventDateTime({ route }: SaveEventDateTimeProps) {
       // Dispatch createEvent and assert the return type
       const actionResult = await dispatch(
         createEvent({
-          eventCompany: route.params.eventCompany,
+          eventHost: route.params.eventHost,
           eventName: route.params.name,
           description: route.params.description,
           dateTimes: dateTimes,
@@ -89,7 +89,7 @@ export default function SaveEventDateTime({ route }: SaveEventDateTimeProps) {
     rootNavigation.navigate("saveEventDateTime", { 
       source: route.params.source, 
       sourceThumb: route.params.sourceThumb,
-      eventCompany: route.params.eventCompany,
+      eventHost: route.params.eventHost,
       name: route.params.name,
       description: route.params.description,
       eventType: route.params.eventType,

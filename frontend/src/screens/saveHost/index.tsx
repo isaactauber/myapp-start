@@ -3,21 +3,21 @@ import { RouteProp, useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { Feather } from "@expo/vector-icons";
 import { MainStackParamList } from "../../navigation/main";
-import { Company } from "../../../types";
+import { Host } from "../../../types";
 import { useUser } from "../../hooks/useUser";
 import { CurrentUserProfileItemInViewContext } from "../../navigation/feed";
-import { getCompaniesByUserId } from "../../services/company";
+import { getHostsByUserId } from "../../services/host";
 import { View, Text, Button, TouchableOpacity } from 'react-native';
 import { Picker } from "@react-native-picker/picker";
 import styles from './styles';
 
-interface SaveEventCompanyProps {
-  route: RouteProp<MainStackParamList, "saveEventCompany">;
+interface SaveEventHostProps {
+  route: RouteProp<MainStackParamList, "saveEventHost">;
 }
 
-export default function SaveEventCompanyScreen({ route }: SaveEventCompanyProps) {
-  const [userCompanies, setUserCompanies] = useState<Company[]>([]);
-  const [eventCompany, setEventCompany] = useState('');
+export default function SaveEventHostScreen({ route }: SaveEventHostProps) {
+  const [userHosts, setUserHosts] = useState<Host[]>([]);
+  const [eventHost, setEventHost] = useState('');
   const navigation = useNavigation<NativeStackNavigationProp<MainStackParamList>>();
 
   const { initialUserId } = route.params;
@@ -32,7 +32,7 @@ export default function SaveEventCompanyScreen({ route }: SaveEventCompanyProps)
   const handleSaveEvent = () => {
     const source = route.params.source;
     const sourceThumb = route.params.sourceThumb;
-    navigation.navigate("saveEventDetails", { source, sourceThumb, eventCompany });
+    navigation.navigate("saveEventDetails", { source, sourceThumb, eventHost });
   };
 
   useEffect(() => {
@@ -40,19 +40,19 @@ export default function SaveEventCompanyScreen({ route }: SaveEventCompanyProps)
       return;
     }
 
-    getCompaniesByUserId(user?.uid).then((companies) => setUserCompanies(companies));
+    getHostsByUserId(user?.uid).then((hosts) => setUserHosts(hosts));
   }, [user]);
 
   return (
     <View style={styles.container}>
-      <Text>Select a Company:</Text>
+      <Text>Select a Host:</Text>
       <Picker
-        selectedValue={eventCompany}
-        onValueChange={(itemValue: React.SetStateAction<string>) => setEventCompany(itemValue)}
+        selectedValue={eventHost}
+        onValueChange={(itemValue: React.SetStateAction<string>) => setEventHost(itemValue)}
         style={styles.inputText}
       >
-      {userCompanies.map((company, index) => (
-          <Picker.Item key={index} label={company.companyName} value={company.id} />
+      {userHosts.map((host, index) => (
+          <Picker.Item key={index} label={host.hostName} value={host.id} />
         ))}
       </Picker>
       <View style={styles.buttonsContainer}>

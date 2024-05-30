@@ -76,7 +76,7 @@ export default function CameraScreen() {
           const source = data.uri;
           let sourceThumb = await generateThumbnail(source);
           if (sourceThumb) {
-            navigation.navigate("saveEventCompany", { source, sourceThumb, initialUserId: FIREBASE_AUTH.currentUser?.uid ?? "" });
+            navigation.navigate("saveEventHost", { source, sourceThumb, initialUserId: FIREBASE_AUTH.currentUser?.uid ?? "" });
           }
         }
       } catch (error) {
@@ -101,7 +101,7 @@ export default function CameraScreen() {
     if (!result.canceled) {
       const sourceThumb = await generateThumbnail(result.assets[0].uri);
       if (sourceThumb) {
-        navigation.navigate("saveEventCompany", {
+        navigation.navigate("saveEventHost", {
           source: result.assets[0].uri,
           sourceThumb,
           initialUserId: FIREBASE_AUTH.currentUser?.uid ?? ""

@@ -17,7 +17,7 @@ export type HostViewStackParamList = {
   myTickets: { initialUserId: string };
   profile: { initialUserId: string };
   hostPosts: { creator: string; profile: boolean };
-  createHostingCompany: undefined;
+  createHost: undefined;
 }
 
 const Tab = createMaterialBottomTabNavigator<HostViewStackParamList>();

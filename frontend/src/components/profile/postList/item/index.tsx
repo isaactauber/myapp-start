@@ -15,7 +15,7 @@ export default function ProfilePostListItem({ item }: { item: Post | null }) {
         style={styles.container}
         onPress={() =>
           navigation.navigate("userPosts", {
-            creator: item.creator,
+            creator: item.creatorHost,
             profile: true,
           })
         }

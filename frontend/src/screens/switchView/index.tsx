@@ -3,10 +3,10 @@ import { RouteProp, useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { Feather } from "@expo/vector-icons";
 import { MainStackParamList } from "../../navigation/main";
-import { Company } from "../../../types";
+import { Host } from "../../../types";
 import { useUser } from "../../hooks/useUser";
 import { CurrentUserProfileItemInViewContext } from "../../navigation/feed";
-import { getCompaniesByUserId } from "../../services/company";
+import { getHostsByUserId } from "../../services/host";
 import { View, Text, Button, TouchableOpacity } from 'react-native';
 import { Picker } from "@react-native-picker/picker";
 import styles from './styles';
@@ -17,8 +17,8 @@ interface SwitchViewScreenProps {
 }
 
 export default function SwitchViewScreen({ route }: SwitchViewScreenProps) {
-  const [userCompanies, setUserCompanies] = useState<Company[]>([]);
-  const [eventCompany, setEventCompany] = useState('');
+  const [userHosts, setUserHosts] = useState<Host[]>([]);
+  const [eventHost, setEventHost] = useState('');
   const [userId, setUserId] = useState('');
   const navigation = useNavigation<NativeStackNavigationProp<MainStackParamList>>();
 
@@ -32,7 +32,7 @@ export default function SwitchViewScreen({ route }: SwitchViewScreenProps) {
   const user = userQuery.data;
 
   const handleOnPress = () => {
-    navigation.navigate("hostView", { hostId: eventCompany, userId: userId });
+    navigation.navigate("hostView", { hostId: eventHost, userId: userId });
   };
 
   useEffect(() => {
@@ -40,20 +40,21 @@ export default function SwitchViewScreen({ route }: SwitchViewScreenProps) {
       return;
     }
 
-    getCompaniesByUserId(user?.uid).then((companies) => setUserCompanies(companies));
+    getHostsByUserId(user?.uid).then((hosts) => setUserHosts(hosts));
+    console.log(userHosts.length);
     setUserId(user?.uid)
   }, [user]);
 
   return (
     <View style={styles.container}>
-      <Text>Select a Company:</Text>
+      <Text>Select a Host:</Text>
       <Picker
-        selectedValue={eventCompany}
-        onValueChange={(itemValue: React.SetStateAction<string>) => setEventCompany(itemValue)}
+        selectedValue={eventHost}
+        onValueChange={(itemValue: React.SetStateAction<string>) => setEventHost(itemValue)}
         style={styles.inputText}
       >
-      {userCompanies.map((company, index) => (
-          <Picker.Item key={index} label={company.companyName} value={company.id} />
+      {userHosts.map((host, index) => (
+          <Picker.Item key={index} label={host.hostName} value={host.id} />
         ))}
       </Picker>
       <View style={styles.buttonsContainer}>

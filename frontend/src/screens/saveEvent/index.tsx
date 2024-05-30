@@ -33,8 +33,8 @@ export default function SaveEventDetailsScreen({ route }: SaveEventDetailsProps)
   const handleSaveEvent = () => {
     const source = route.params.source;
     const sourceThumb = route.params.sourceThumb;
-    const eventCompany = route.params.eventCompany
-    navigation.navigate("saveEventDateTime", { source, sourceThumb, eventCompany, name, description, eventType, location, dateTimes });
+    const eventHost = route.params.eventHost
+    navigation.navigate("saveEventDateTime", { source, sourceThumb, eventHost, name, description, eventType, location, dateTimes });
   };
 
   return (

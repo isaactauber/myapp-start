@@ -6,11 +6,11 @@ import {
     where,
   } from "firebase/firestore";
   import { FIREBASE_AUTH, FIREBASE_DB } from "../../firebaseConfig";
-  import { Company } from "../../types";
+  import { Host } from "../../types";
   
-  export const getCompaniesByUserId = (
+  export const getHostsByUserId = (
     uid = FIREBASE_AUTH.currentUser?.uid,
-  ): Promise<Company[]> => {
+  ): Promise<Host[]> => {
     return new Promise((resolve, reject) => {
       if (!uid) {
         reject(new Error("User ID is not set"));
@@ -18,18 +18,18 @@ import {
       }
   
       const q = query(
-        collection(FIREBASE_DB, "company"),
+        collection(FIREBASE_DB, "host"),
         where("creator", "==", uid),
         orderBy("creation", "desc"),
       );
   
       const unsubscribe = onSnapshot(q, (snapshot) => {
-        let companies = snapshot.docs.map((doc) => {
+        let hosts = snapshot.docs.map((doc) => {
           const data = doc.data();
           const id = doc.id;
-          return { id, ...data } as Company;
+          return { id, ...data } as Host;
         });
-        resolve(companies);
+        resolve(hosts);
       });
   
       return () => unsubscribe();
