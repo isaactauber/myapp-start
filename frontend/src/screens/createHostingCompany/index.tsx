@@ -4,15 +4,15 @@ import { Feather } from "@expo/vector-icons";
 import { RouteProp, useNavigation } from "@react-navigation/native";
 import styles from "./styles";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import { RootStackParamList } from "../../navigation/main";
+import { MainStackParamList } from "../../navigation/main";
 import { Picker } from "@react-native-picker/picker";
 import { createCompany } from "../../redux/slices/companySlice";
 import { AppDispatch } from "../../redux/store";
 import { useDispatch } from "react-redux";
-import { HomeStackParamList } from "../../navigation/home";
+import { HostViewStackParamList } from "../../navigation/host";
 
 interface CreateHostingCompanyProps {
-  route: RouteProp<RootStackParamList, "createHostingCompany">;
+  route: RouteProp<HostViewStackParamList, "createHostingCompany">;
 }
 
 enum CompanyType {
@@ -29,7 +29,7 @@ export default function CreateHostingCompanyScreen({ route }: CreateHostingCompa
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
   const [companyType, setCompanyType] = useState('');
-  const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
+  const navigation = useNavigation<NativeStackNavigationProp<MainStackParamList>>();
   const dispatch: AppDispatch = useDispatch();
 
   const handleSaveCompany = async () => {

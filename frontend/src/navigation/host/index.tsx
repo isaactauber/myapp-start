@@ -7,6 +7,8 @@ import { useChats } from "../../hooks/useChats";
 import CameraScreen from "../../screens/camera";
 import GuestlistScreen from "../../screens/guestList";
 import HostHomeScreen from "../../screens/hostHome";
+import { MainStackParamList } from "../main";
+import { RouteProp } from "@react-navigation/native";
 
 export type HostViewStackParamList = {
   home: undefined;
@@ -15,20 +17,20 @@ export type HostViewStackParamList = {
   myTickets: { initialUserId: string };
   profile: { initialUserId: string };
   hostPosts: { creator: string; profile: boolean };
+  createHostingCompany: undefined;
 }
-
-// export type HomeStackParamList = {
-//   feed: undefined;
-//   Discover: undefined;
-//   Add: undefined;
-//   Inbox: undefined;
-//   Me: { initialUserId: string };
-// };
 
 const Tab = createMaterialBottomTabNavigator<HostViewStackParamList>();
 
-export default function HostViewScreen() {
+interface HostViewScreenProps {
+  route: 
+    | RouteProp<MainStackParamList, "hostView">;
+}
+
+export default function HostViewScreen({ route }: HostViewScreenProps) {
   useChats();
+  const hostId = route.params.hostId;
+  const userId = route.params.userId;
 
   return (
     <Tab.Navigator

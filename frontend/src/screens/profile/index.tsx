@@ -15,6 +15,7 @@ import FeedScreen from "../feed";
 import EditProfileScreen from "./edit";
 import EditProfileFieldScreen from "./edit/field";
 import CreateHostingCompanyScreen from "../createHostingCompany";
+import { HostViewStackParamList } from "../../navigation/host";
 
 
 export type ProfileStackParamList = {
@@ -30,7 +31,8 @@ const Stack = createNativeStackNavigator<ProfileStackParamList>();
 
 type ProfileScreenRouteProp =
   | RouteProp<FeedStackParamList, "feedProfile">
-  | RouteProp<ProfileStackParamList, "profileOther">;
+  | RouteProp<ProfileStackParamList, "profileOther">
+  | RouteProp<HostViewStackParamList, "profile">;
 
 export default function ProfileScreen({
   route,

@@ -12,18 +12,10 @@ import UserProfileScreen from "../../screens/userProfile";
 export type UserViewStackParamList = {
   feed: undefined;
   search: undefined;
-  create: { hostId: string };
+  create: { initialUserId: string };
   myTickets: { initialUserId: string };
   profile: { initialUserId: string };
 }
-
-// export type HomeStackParamList = {
-//   feed: undefined;
-//   Discover: undefined;
-//   Add: undefined;
-//   Inbox: undefined;
-//   Me: { initialUserId: string };
-// };
 
 const Tab = createMaterialBottomTabNavigator<UserViewStackParamList>();
 
@@ -62,6 +54,7 @@ export default function UserViewScreen() {
             <Feather name="plus-square" size={24} color={color} />
           ),
         }}
+        initialParams={{ initialUserId: FIREBASE_AUTH.currentUser?.uid ?? "" }}
       />
       <Tab.Screen
         name="myTickets"

@@ -16,13 +16,13 @@ import { createEvent } from "../../redux/slices/eventSlice";
 import { useNavigation } from "@react-navigation/native";
 import { RouteProp } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import { RootStackParamList } from "../../navigation/main";
+import { MainStackParamList } from "../../navigation/main";
 import { AppDispatch } from "../../redux/store";
-import { HomeStackParamList } from "../../navigation/home";
+import { HostViewStackParamList } from "../../navigation/host";
 import { createPost } from "../../redux/slices/postSlice";
 
 interface SaveEventDateTimeProps {
-  route: RouteProp<RootStackParamList, "saveEventDateTime">;
+  route: RouteProp<MainStackParamList, "saveEventDateTime">;
 }
 
 interface CreateEventReturnType {
@@ -36,8 +36,8 @@ export default function SaveEventDateTime({ route }: SaveEventDateTimeProps) {
   const [dateTimes, setDateTimes] = useState<Date[]>([]);
 
 
-  const homeNavigation = useNavigation<NativeStackNavigationProp<HomeStackParamList>>();
-  const rootNavigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
+  const hostNavigation = useNavigation<NativeStackNavigationProp<HostViewStackParamList>>();
+  const rootNavigation = useNavigation<NativeStackNavigationProp<MainStackParamList>>();
   const dispatch: AppDispatch = useDispatch();
 
   const handleSaveEvent = async () => {
@@ -69,7 +69,7 @@ export default function SaveEventDateTime({ route }: SaveEventDateTimeProps) {
           }),
         );
         
-        homeNavigation.navigate("feed");
+        hostNavigation.navigate("home");
       } else {
         throw new Error("Event creation failed, event ID not found.");
       }
@@ -135,7 +135,7 @@ export default function SaveEventDateTime({ route }: SaveEventDateTimeProps) {
       </View>
       <View style={styles.buttonsContainer}>
         <TouchableOpacity
-          onPress={() => homeNavigation.goBack()}
+          onPress={() => hostNavigation.goBack()}
           style={styles.cancelButton}
         >
           <Feather name="x" size={24} color="black" />

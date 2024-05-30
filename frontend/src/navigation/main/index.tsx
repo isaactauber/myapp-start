@@ -16,7 +16,7 @@ import HostViewScreen from "../host";
 export type MainStackParamList = {
   auth: undefined;
   userView: undefined;
-  hostView: { hostId: string };
+  hostView: { hostId: string, userId: string };
   saveEventCompany: { 
     source: string;
     sourceThumb: string;
@@ -37,12 +37,6 @@ export type MainStackParamList = {
     location: string;
     dateTimes: Date[];
   };
-  // userPosts: { creator: string; profile: boolean };
-  // profileOther: { initialUserId: string };
-  // editProfile: undefined;
-  // editProfileField: { title: string; field: string; value: string };
-  // profileHome: { initialUserId: string };
-  // createHostingCompany: undefined;
 }
 
 // export type RootStackParamList = {
