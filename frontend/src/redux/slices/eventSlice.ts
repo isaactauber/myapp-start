@@ -14,13 +14,13 @@ import { Event } from "../../../types";
 interface EventState {
   loading: boolean;
   error: string | null;
-  currentUserEvents: Event[] | null;
+  currentHostEvents: Event[] | null;
 }
 
 const initialState: EventState = {
   loading: false,
   error: null,
-  currentUserEvents: null,
+  currentHostEvents: null,
 };
 
 interface CreateEventReturnType {
@@ -28,7 +28,7 @@ interface CreateEventReturnType {
 }
 
 interface CreateEventArgs {
-  eventHost: string;
+  creatorHost: string;
   description: string;
   eventName: string;
   dateTimes: Date[];
@@ -38,15 +38,14 @@ interface CreateEventArgs {
 
 export const createEvent = createAsyncThunk<CreateEventReturnType, CreateEventArgs>(
   "event/create",
-  async ({ eventHost, description, eventName, dateTimes, eventType, location }, { rejectWithValue }) => {
+  async ({ creatorHost, description, eventName, dateTimes, eventType, location }, { rejectWithValue }) => {
     try {
       if (!FIREBASE_AUTH.currentUser) {
         throw new Error("User not authenticated");
       }
-
       const docRef = await addDoc(collection(FIREBASE_DB, "event"), {
-        creator: FIREBASE_AUTH.currentUser.uid,
-        eventHost,
+        creatorUser: FIREBASE_AUTH.currentUser.uid,
+        creatorHost,
         description,
         eventName,
         dateTimes,
@@ -54,7 +53,6 @@ export const createEvent = createAsyncThunk<CreateEventReturnType, CreateEventAr
         location,
         creation: serverTimestamp(),
       });
-
       return { eventId: docRef.id };
     } catch (error) {
       return rejectWithValue(error);
@@ -62,14 +60,14 @@ export const createEvent = createAsyncThunk<CreateEventReturnType, CreateEventAr
   }
 );
 
-export const getEventsByUser = createAsyncThunk(
-  "event/getEventsByUser",
+export const getEventsByHost = createAsyncThunk(
+  "event/getEventsByHost",
   async (uid: string, { dispatch, rejectWithValue }) => {
     try {
       // Create a query against the collection.
       const q = query(
         collection(FIREBASE_DB, "event"),
-        where("creator", "==", uid),
+        where("creatorHost", "==", uid),
         orderBy("creation", "desc"),
       );
 
@@ -112,18 +110,18 @@ const eventSlice = createSlice({
         state.loading = false;
         state.error = action.error.message || null;
       })
-      .addCase(getEventsByUser.pending, (state) => {
+      .addCase(getEventsByHost.pending, (state) => {
         state.loading = true;
         state.error = null;
       })
       .addCase(
-        getEventsByUser.fulfilled,
+        getEventsByHost.fulfilled,
         (state, action: PayloadAction<Event[]>) => {
           state.loading = false;
-          state.currentUserEvents = action.payload;
+          state.currentHostEvents = action.payload;
         },
       )
-      .addCase(getEventsByUser.rejected, (state, action) => {
+      .addCase(getEventsByHost.rejected, (state, action) => {
         state.loading = false;
         state.error = action.error.message || null;
       });

@@ -1,14 +1,13 @@
 import { Dispatch, SetStateAction, createContext, useState } from "react";
 import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
 import FeedScreen from "../../screens/feed";
-import ProfileScreen from "../../screens/profile";
 
 export type FeedStackParamList = {
   feedList: {
     creator: string;
     profile: boolean;
   };
-  feedProfile: { initialUserId: string };
+  feedProfile: { hostId: string };
 };
 
 interface CurrentUserProfileItemInViewContextType {
@@ -42,11 +41,11 @@ const FeedNavigation = () => {
           component={FeedScreen}
           initialParams={{ profile: false }}
         />
-        <Screen
+        {/* <Screen
           name="feedProfile"
           component={ProfileScreen}
-          initialParams={{ initialUserId: "" }}
-        />
+          initialParams={{ hostId:  }}
+        /> */}
       </Navigator>
     </CurrentUserProfileItemInViewContext.Provider>
   );

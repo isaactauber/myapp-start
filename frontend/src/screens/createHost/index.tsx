@@ -4,15 +4,14 @@ import { Feather } from "@expo/vector-icons";
 import { RouteProp, useNavigation } from "@react-navigation/native";
 import styles from "./styles";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import { MainStackParamList } from "../../navigation/main";
 import { Picker } from "@react-native-picker/picker";
 import { createHost } from "../../redux/slices/hostSlice";
 import { AppDispatch } from "../../redux/store";
 import { useDispatch } from "react-redux";
-import { HostViewStackParamList } from "../../navigation/host";
+import { MainStackParamList } from "../../navigation/main";
 
 interface CreateHostProps {
-  route: RouteProp<HostViewStackParamList, "createHost">;
+  route: RouteProp<MainStackParamList, "createHost">;
 }
 
 enum HostType {

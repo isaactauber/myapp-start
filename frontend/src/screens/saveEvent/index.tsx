@@ -31,10 +31,10 @@ export default function SaveEventDetailsScreen({ route }: SaveEventDetailsProps)
   const navigation = useNavigation<NativeStackNavigationProp<MainStackParamList>>();
 
   const handleSaveEvent = () => {
+    const currentHost = route.params.currentHost;
     const source = route.params.source;
     const sourceThumb = route.params.sourceThumb;
-    const eventHost = route.params.eventHost
-    navigation.navigate("saveEventDateTime", { source, sourceThumb, eventHost, name, description, eventType, location, dateTimes });
+    navigation.navigate("saveEventDateTime", { currentHost, source, sourceThumb, name, description, eventType, location, dateTimes });
   };
 
   return (

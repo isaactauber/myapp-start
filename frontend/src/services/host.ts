@@ -4,6 +4,8 @@ import {
     orderBy,
     onSnapshot,
     where,
+    getDoc,
+    doc,
   } from "firebase/firestore";
   import { FIREBASE_AUTH, FIREBASE_DB } from "../../firebaseConfig";
   import { Host } from "../../types";
@@ -35,4 +37,23 @@ import {
       return () => unsubscribe();
     });
   };
+
+  /**
+   * fetches the doc corresponding to the id of a user.
+   *
+   * @param {String} id of the user we want to fetch
+   * @returns {Promise<User>} user object if successful.
+   */
+  export const getHostById = async (id: string): Promise<Host | null> => {
+    try {
+      const docSnapshot = await getDoc(doc(FIREBASE_DB, "host", id));
+      if (docSnapshot.exists()) {
+        return docSnapshot.data() as Host;
+      } else {
+        return null;
+      }
+    } catch (error) {
+      throw new Error(String(error));
+    }
+};
   

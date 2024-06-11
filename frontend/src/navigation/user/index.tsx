@@ -12,7 +12,7 @@ import UserProfileScreen from "../../screens/userProfile";
 export type UserViewStackParamList = {
   feed: undefined;
   search: undefined;
-  create: { initialUserId: string };
+  switchView: { initialUserId: string };
   myTickets: { initialUserId: string };
   profile: { initialUserId: string };
 }
@@ -47,7 +47,7 @@ export default function UserViewScreen() {
         }}
       />
       <Tab.Screen
-        name="create"
+        name="switchView"
         component={SwitchViewScreen}
         options={{
           tabBarIcon: ({ color }) => (

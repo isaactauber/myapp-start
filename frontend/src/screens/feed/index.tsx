@@ -2,7 +2,7 @@ import { FlatList, View, Dimensions, ViewToken, StyleSheet } from "react-native"
 import styles from "./styles";
 import PostSingle, { PostSingleHandles } from "../../components/general/post";
 import { useContext, useEffect, useRef, useState } from "react";
-import { getFeed, getPostsByUserId } from "../../services/posts";
+import { getFeed, getPostsByHostId } from "../../services/posts";
 import { Post } from "../../../types";
 import { RouteProp } from "@react-navigation/native";
 import { UserViewStackParamList } from "../../navigation/user";
@@ -35,7 +35,7 @@ export default function FeedScreen({ route }: { route: FeedScreenRouteProp }) {
 
   useEffect(() => {
     if (profile && creator) {
-      getPostsByUserId(creator).then(setPosts);
+      getPostsByHostId(creator).then(setPosts);
     } else {
       getFeed().then(setPosts);
     }

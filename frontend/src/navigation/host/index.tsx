@@ -10,14 +10,14 @@ import HostHomeScreen from "../../screens/hostHome";
 import { MainStackParamList } from "../main";
 import { RouteProp } from "@react-navigation/native";
 
+// TODO: cache currentHost parameter with FIREBASE_AUTH instead of passing around as screen params
 export type HostViewStackParamList = {
-  home: undefined;
-  search: undefined;
-  create: { hostId: string };
-  myTickets: { initialUserId: string };
-  profile: { initialUserId: string };
-  hostPosts: { creator: string; profile: boolean };
-  createHost: undefined;
+  home: { currentHost: string };
+  search: { currentHost: string };
+  create: { currentHost: string };
+  myTickets: { initialUserId: string; currentHost: string };
+  profile: { currentHost: string };
+  hostPosts: { creator: string; profile: boolean; currentHost: string };
 }
 
 const Tab = createMaterialBottomTabNavigator<HostViewStackParamList>();
@@ -29,18 +29,17 @@ interface HostViewScreenProps {
 
 export default function HostViewScreen({ route }: HostViewScreenProps) {
   useChats();
-  const hostId = route.params.hostId;
-  const userId = route.params.userId;
+  const currentHost = route.params.hostId;
 
   return (
     <Tab.Navigator
-      // TODO: height not set and dynamically calculated in useMaterialNavBarHeight.ts
       barStyle={{ backgroundColor: "black", height: 114 }}
       initialRouteName="home"
     >
       <Tab.Screen
         name="home"
         component={HostHomeScreen}
+        initialParams={{ currentHost: currentHost }}
         options={{
           tabBarIcon: ({ color }) => (
             <Feather name="home" size={24} color={color} />
@@ -50,6 +49,7 @@ export default function HostViewScreen({ route }: HostViewScreenProps) {
       <Tab.Screen
         name="search"
         component={SearchScreen}
+        initialParams={{ currentHost: currentHost }}
         options={{
           tabBarIcon: ({ color }) => (
             <Feather name="search" size={24} color={color} />
@@ -59,6 +59,7 @@ export default function HostViewScreen({ route }: HostViewScreenProps) {
       <Tab.Screen
         name="create"
         component={CameraScreen}
+        initialParams={{ currentHost: currentHost }}
         options={{
           tabBarIcon: ({ color }) => (
             <Feather name="plus-square" size={24} color={color} />
@@ -68,6 +69,7 @@ export default function HostViewScreen({ route }: HostViewScreenProps) {
       <Tab.Screen
         name="myTickets"
         component={GuestlistScreen}
+        initialParams={{ currentHost: currentHost }}
         options={{
           tabBarIcon: ({ color }) => (
             <Feather name="message-square" size={24} color={color} />
@@ -82,7 +84,7 @@ export default function HostViewScreen({ route }: HostViewScreenProps) {
             <Feather name="user" size={24} color={color} />
           ),
         }}
-        initialParams={{ initialUserId: FIREBASE_AUTH.currentUser?.uid ?? "" }}
+        initialParams={{ currentHost: currentHost }}
       />
     </Tab.Navigator>
   );

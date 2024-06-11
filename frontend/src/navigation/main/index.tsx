@@ -10,7 +10,6 @@ import { View } from "react-native";
 import Modal from "../../components/modal";
 import SaveEventDetailsScreen from "../../screens/saveEvent";
 import SaveEventDateTime from "../../screens/saveEventDateTime";
-import SaveEventHostScreen from "../../screens/saveHost";
 import HostViewScreen from "../host";
 import CreateHostScreen from "../../screens/createHost";
 
@@ -18,20 +17,15 @@ export type MainStackParamList = {
   auth: undefined;
   userView: undefined;
   hostView: { hostId: string, userId: string };
-  saveEventHost: { 
-    source: string;
-    sourceThumb: string;
-    initialUserId: string
-  };
   saveEventDetails: { 
+    currentHost: string;
     source: string;
     sourceThumb: string;
-    eventHost: string
   };
   saveEventDateTime: { 
+    currentHost: string;
     source: string;
     sourceThumb: string;
-    eventHost: string;
     name: string;
     description: string;
     eventType: string;
@@ -78,18 +72,8 @@ export default function Route() {
               component={HostViewScreen}
               options={{ headerShown: false }}
             />
-            {/* <Stack.Screen
-              name="home"
-              component={HomeScreen}
-              options={{ headerShown: false }}
-            />
             {/* CameraScreen did not work well being nested in a Screen.Navigator, 
               keeping saveEvent screens here for now */}
-            <Stack.Screen
-              name="saveEventHost"
-              component={SaveEventHostScreen}
-              options={{ headerShown: false }}
-            />
             <Stack.Screen
               name="saveEventDetails"
               component={SaveEventDetailsScreen}

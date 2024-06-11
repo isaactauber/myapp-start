@@ -22,7 +22,7 @@ export interface PostSingleHandles {
 export const PostSingle = forwardRef<PostSingleHandles, { item: Post }>(
   ({ item }, parentRef) => {
     const ref = useRef<Video>(null);
-    const user = useUser(item.creator).data;
+    const user = useUser(item.creatorHost).data;
 
     useImperativeHandle(parentRef, () => ({
       play,

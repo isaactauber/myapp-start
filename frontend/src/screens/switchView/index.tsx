@@ -11,9 +11,10 @@ import { View, Text, Button, TouchableOpacity } from 'react-native';
 import { Picker } from "@react-native-picker/picker";
 import styles from './styles';
 import { UserViewStackParamList } from "../../navigation/user";
+import { AsyncThunkAction, Dispatch, AnyAction } from "@reduxjs/toolkit";
 
 interface SwitchViewScreenProps {
-  route: RouteProp<UserViewStackParamList, "create">;
+  route: RouteProp<UserViewStackParamList, "switchView">;
 }
 
 export default function SwitchViewScreen({ route }: SwitchViewScreenProps) {
@@ -35,14 +36,22 @@ export default function SwitchViewScreen({ route }: SwitchViewScreenProps) {
     navigation.navigate("hostView", { hostId: eventHost, userId: userId });
   };
 
+  const handleCreateNewHost = () => {
+    navigation.navigate("createHost");
+  };
+
   useEffect(() => {
     if (!user) {
       return;
     }
 
-    getHostsByUserId(user?.uid).then((hosts) => setUserHosts(hosts));
-    console.log(userHosts.length);
-    setUserId(user?.uid)
+    getHostsByUserId(user?.uid).then((hosts) => {
+      setUserHosts(hosts);
+      if (hosts.length > 0) {
+        setEventHost(hosts[0].id);
+      }
+    });
+    setUserId(user?.uid);
   }, [user]);
 
   return (
@@ -53,19 +62,30 @@ export default function SwitchViewScreen({ route }: SwitchViewScreenProps) {
         onValueChange={(itemValue: React.SetStateAction<string>) => setEventHost(itemValue)}
         style={styles.inputText}
       >
-      {userHosts.map((host, index) => (
+        {userHosts.map((host, index) => (
           <Picker.Item key={index} label={host.hostName} value={host.id} />
         ))}
       </Picker>
       <View style={styles.buttonsContainer}>
-        <TouchableOpacity onPress={() => navigation.goBack()} style={[styles.button, styles.cancelButton]}>
-          <Feather name="x" size={20} color="#333" />
-          <Text style={[styles.buttonText, { color: '#333' }]}>Cancel</Text>
-        </TouchableOpacity>
+        <View style={styles.horizontalButtonsContainer}>
+          <TouchableOpacity onPress={() => navigation.goBack()} style={[styles.button, styles.cancelButton]}>
+            <Feather name="x" size={20} color="#333" />
+            <Text style={[styles.buttonText, { color: '#333' }]}>Cancel</Text>
+          </TouchableOpacity>
 
-        <TouchableOpacity onPress={handleOnPress} style={[styles.button, styles.saveButton]}>
-          <Feather name="check" size={20} color="#fff" />
-          <Text style={styles.buttonText}>Save</Text>
+          <TouchableOpacity 
+            onPress={handleOnPress} 
+            style={[styles.button, styles.saveButton]} 
+            disabled={userHosts.length === 0}
+          >
+            <Feather name="check" size={20} color="#fff" />
+            <Text style={styles.buttonText}>Select</Text>
+          </TouchableOpacity>
+        </View>
+
+        <TouchableOpacity onPress={handleCreateNewHost} style={[styles.button, styles.createButton]}>
+          <Feather name="plus" size={20} color="#fff" />
+          <Text style={styles.buttonText}>Create New Host</Text>
         </TouchableOpacity>
       </View>
     </View>

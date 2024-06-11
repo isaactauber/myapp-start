@@ -1,9 +1,7 @@
 import React, { useState } from "react";
 import {
   ActivityIndicator,
-  Image,
   Text,
-  TextInput,
   TouchableOpacity,
   View,
   Platform,
@@ -43,13 +41,12 @@ export default function SaveEventDateTime({ route }: SaveEventDateTimeProps) {
   const handleSaveEvent = async () => {
     try {
       setRequestRunning(true);
-      console.log("dateTimes: " + route.params.dateTimes);
       setDateTimes(route.params.dateTimes.concat(date));
       
       // Dispatch createEvent and assert the return type
       const actionResult = await dispatch(
         createEvent({
-          eventHost: route.params.eventHost,
+          creatorHost: route.params.currentHost,
           eventName: route.params.name,
           description: route.params.description,
           dateTimes: dateTimes,
@@ -57,19 +54,18 @@ export default function SaveEventDateTime({ route }: SaveEventDateTimeProps) {
           location: route.params.location
         })
       );
-  
       // Use a type guard to safely access the payload
       if ('payload' in actionResult && actionResult.payload) {
         const { eventId } = actionResult.payload as CreateEventReturnType;
         await dispatch(
           createPost({
+            creatorHost: route.params.currentHost,
             event: eventId,
             video: route.params.source,
             thumbnail: route.params.sourceThumb,
           }),
         );
-        
-        hostNavigation.navigate("home");
+        hostNavigation.navigate("home", { currentHost: route.params.currentHost });
       } else {
         throw new Error("Event creation failed, event ID not found.");
       }
@@ -79,17 +75,16 @@ export default function SaveEventDateTime({ route }: SaveEventDateTimeProps) {
     }
   };
   
-
+  // TODO: I dont think handing date times is working correctly
   const handleAddAnotherDate = () => {
     if (route.params.dateTimes)
       setDateTimes(route.params.dateTimes.concat(date));
     else
       setDateTimes([date]);
-    console.log("dateTimes: " + dateTimes);
     rootNavigation.navigate("saveEventDateTime", { 
+      currentHost: route.params.currentHost,
       source: route.params.source, 
       sourceThumb: route.params.sourceThumb,
-      eventHost: route.params.eventHost,
       name: route.params.name,
       description: route.params.description,
       eventType: route.params.eventType,
@@ -101,7 +96,6 @@ export default function SaveEventDateTime({ route }: SaveEventDateTimeProps) {
     const currentDate = selectedDate || date;
     setShowDatePicker(Platform.OS === 'ios');
     setDate(currentDate);
-    console.log("date: " + date);
 };
 
 

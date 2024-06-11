@@ -10,7 +10,7 @@ import { AppDispatch, RootState } from "../../../../redux/store";
 import { openCommentModal } from "../../../../redux/slices/modalSlice";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import { RootStackParamList } from "../../../../navigation/main";
+import { ProfileStackParamList } from "../../../../screens/profile";
 import { Avatar } from "react-native-paper";
 
 /**
@@ -31,7 +31,7 @@ export default function PostSingleOverlay({
   const currentUser = useSelector((state: RootState) => state.auth.currentUser);
   const dispatch: AppDispatch = useDispatch();
   const navigation =
-    useNavigation<NativeStackNavigationProp<RootStackParamList>>();
+    useNavigation<NativeStackNavigationProp<ProfileStackParamList>>();
 
   const [currentLikeState, setCurrentLikeState] = useState({
     state: false,
@@ -88,9 +88,7 @@ export default function PostSingleOverlay({
       <View style={styles.leftContainer}>
         <TouchableOpacity
           onPress={() =>
-            navigation.navigate("profileOther", {
-              initialUserId: user?.uid ?? "",
-            })
+            navigation.navigate("profileOther")
           }
         >
           {user.photoURL ? (

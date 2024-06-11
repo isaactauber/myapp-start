@@ -16,9 +16,12 @@ const styles = StyleSheet.create({
     color: "#333",
   },
   buttonsContainer: {
+    marginTop: 20,
+  },
+  horizontalButtonsContainer: {
     flexDirection: "row",
     justifyContent: "space-between",
-    marginTop: 20,
+    marginBottom: 10,
   },
   button: {
     flexDirection: "row",
@@ -34,6 +37,9 @@ const styles = StyleSheet.create({
   },
   saveButton: {
     backgroundColor: "#007bff",
+  },
+  createButton: {
+    backgroundColor: "#28a745", // Green color for the create button
   },
   buttonText: {
     color: "#fff",

@@ -7,12 +7,12 @@ import NavBarGeneral from "../../../../components/general/navbar";
 import { saveUserField } from "../../../../services/user";
 import { generalStyles } from "../../../../styles";
 import styles from "./styles";
-import { RootStackParamList } from "../../../../navigation/main";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { ProfileStackParamList } from "../..";
 
 interface EditProfileFieldScreenProps {
-  route: RouteProp<RootStackParamList, "editProfileField">;
-  navigation: NativeStackNavigationProp<RootStackParamList, "editProfileField">;
+  route: RouteProp<ProfileStackParamList, "editProfileField">;
+  navigation: NativeStackNavigationProp<ProfileStackParamList, "editProfileField">;
 }
 
 export default function EditProfileFieldScreen({

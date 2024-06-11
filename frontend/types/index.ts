@@ -1,4 +1,5 @@
 export interface Post {
+  description: string;
   id: string;
   creatorUser: string;
   creatorHost: string;
@@ -28,6 +29,11 @@ export interface Host {
   hostType: string;
   description: string;
   creation: string;
+  displayName: string | null;
+  photoURL?: string;
+  followingCount: number;
+  followersCount: number;
+  likesCount: number;
 }
 
 export interface Comment {

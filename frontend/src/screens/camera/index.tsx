@@ -15,9 +15,13 @@ import { Feather } from "@expo/vector-icons";
 
 import styles from "./styles";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import { useNavigation } from "@react-navigation/native";
+import { RouteProp, useNavigation } from "@react-navigation/native";
 import { MainStackParamList } from "../../navigation/main";
-import { FIREBASE_AUTH } from "../../../firebaseConfig";
+import { HostViewStackParamList } from "../../navigation/host";
+
+interface CameraScreenProps {
+  route: RouteProp<HostViewStackParamList, "create">;
+}
 
 /**
  * Function that renders a component responsible showing
@@ -25,7 +29,7 @@ import { FIREBASE_AUTH } from "../../../firebaseConfig";
  * letting the user pick a video from the gallery
  * @returns Functional Component
  */
-export default function CameraScreen() {
+export default function CameraScreen({ route }: CameraScreenProps) {
   const [hasCameraPermissions, setHasCameraPermissions] = useState(false);
   const [hasAudioPermissions, setHasAudioPermissions] = useState(false);
   const [hasGalleryPermissions, setHasGalleryPermissions] = useState(false);
@@ -41,6 +45,7 @@ export default function CameraScreen() {
 
   const navigation =
     useNavigation<NativeStackNavigationProp<MainStackParamList>>();
+
   useEffect(() => {
     (async () => {
       const cameraStatus = await requestCameraPermissionsAsync();
@@ -76,7 +81,11 @@ export default function CameraScreen() {
           const source = data.uri;
           let sourceThumb = await generateThumbnail(source);
           if (sourceThumb) {
-            navigation.navigate("saveEventHost", { source, sourceThumb, initialUserId: FIREBASE_AUTH.currentUser?.uid ?? "" });
+            navigation.navigate("saveEventDetails", { 
+              currentHost: route.params.currentHost,
+              source,
+              sourceThumb
+            });
           }
         }
       } catch (error) {
@@ -101,10 +110,10 @@ export default function CameraScreen() {
     if (!result.canceled) {
       const sourceThumb = await generateThumbnail(result.assets[0].uri);
       if (sourceThumb) {
-        navigation.navigate("saveEventHost", {
+        navigation.navigate("saveEventDetails", {
+          currentHost: route.params.currentHost,
           source: result.assets[0].uri,
-          sourceThumb,
-          initialUserId: FIREBASE_AUTH.currentUser?.uid ?? ""
+          sourceThumb
         });
       }
     }
