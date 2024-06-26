@@ -1,25 +1,23 @@
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet, Button } from 'react-native';
+import { MainStackParamList } from '../../navigation/main';
+import { useNavigation } from '@react-navigation/native';
+import styles from './styles';
 
 const HostHomeScreen = () => {
+    const navigation = useNavigation<NativeStackNavigationProp<MainStackParamList>>();
+
+    const handleOnPress = () => {
+        navigation.navigate("userView");
+    };
+
     return (
         <View style={styles.container}>
-            <Text style={styles.text}>Feature coming soon</Text>
+            {/* <Text style={styles.text}>Feature coming soon</Text> */}
+            <Button title="Switch View" onPress={handleOnPress} />
         </View>
     );
 };
-
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-        backgroundColor: '#f0f0f0',
-    },
-    text: {
-        fontSize: 20,
-        color: '#606060',
-    }
-});
 
 export default HostHomeScreen;
