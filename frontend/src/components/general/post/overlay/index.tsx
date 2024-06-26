@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { View, Text, Image, TouchableOpacity } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import styles from "./styles";
-import { Post, User } from "../../../../../types";
+import { Host, Post } from "../../../../../types";
 import { useDispatch, useSelector } from "react-redux";
 import { throttle } from "throttle-debounce";
 import { getLikeById, updateLike } from "../../../../services/posts";
@@ -15,17 +15,17 @@ import { Avatar } from "react-native-paper";
 
 /**
  * Function that renders a component meant to be overlapped on
- * top of the post with the post info like user's display name and avatar
+ * top of the post with the post info like host's display name and avatar
  * and the post's description
  *
- * @param {User} user that created the post
+ * @param {Host} host that created the post
  * @param {Post} post object
  */
 export default function PostSingleOverlay({
-  user,
+  host,
   post,
 }: {
-  user: User;
+  host: Host;
   post: Post;
 }) {
   const currentUser = useSelector((state: RootState) => state.auth.currentUser);
@@ -82,17 +82,18 @@ export default function PostSingleOverlay({
   return (
     <View style={styles.container}>
       <View>
-        <Text style={styles.displayName}>{user.displayName || user.email}</Text>
+        <Text style={styles.displayName}>{host.displayName || host.displayName}</Text>
         <Text style={styles.description}>{post.description}</Text>
       </View>
       <View style={styles.leftContainer}>
         <TouchableOpacity
           onPress={() =>
+            //TODO
             navigation.navigate("profileOther")
           }
         >
-          {user.photoURL ? (
-            <Image style={styles.avatar} source={{ uri: user.photoURL }} />
+          {host.photoURL ? (
+            <Image style={styles.avatar} source={{ uri: host.photoURL }} />
           ) : (
             <Avatar.Icon
               style={styles.defaultAvatar}

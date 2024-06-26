@@ -1,10 +1,9 @@
 import { forwardRef, useEffect, useImperativeHandle, useRef } from "react";
-import { StyleSheet } from "react-native";
 import { ResizeMode, Video } from "expo-av";
 import styles from "./styles";
 import { Post } from "../../../../types";
-import { useUser } from "../../../hooks/useUser";
 import PostSingleOverlay from "./overlay";
+import { useHost } from "../../../hooks/useHost";
 
 export interface PostSingleHandles {
   play: () => Promise<void>;
@@ -22,7 +21,7 @@ export interface PostSingleHandles {
 export const PostSingle = forwardRef<PostSingleHandles, { item: Post }>(
   ({ item }, parentRef) => {
     const ref = useRef<Video>(null);
-    const user = useUser(item.creatorHost).data;
+    const host = useHost(item.creatorHost).data;
 
     useImperativeHandle(parentRef, () => ({
       play,
@@ -104,7 +103,7 @@ export const PostSingle = forwardRef<PostSingleHandles, { item: Post }>(
 
     return (
       <>
-        {user && <PostSingleOverlay user={user} post={item} />}
+        {host && <PostSingleOverlay host={host} post={item} />}
         <Video
           ref={ref}
           style={styles.container}
