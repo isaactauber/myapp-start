@@ -1,11 +1,39 @@
 export interface Post {
-  id: string;
-  creator: string;
-  media: string[];
   description: string;
+  id: string;
+  creatorUser: string;
+  creatorHost: string;
+  media: string[];
+  event: Event;
   likesCount: number;
   commentsCount: number;
   creation: string;
+}
+
+export interface Event {
+  id: string;
+  creatorUser: string;
+  creatorHost: string;
+  name: string;
+  eventType: string;
+  dateTimes: Date[];
+  description: string;
+  location: string;
+  creation: string;
+}
+
+export interface Host {
+  id: string;
+  creator: string;
+  hostName: string;
+  hostType: string;
+  description: string;
+  creation: string;
+  displayName: string | null;
+  photoURL?: string;
+  followingCount: number;
+  followersCount: number;
+  likesCount: number;
 }
 
 export interface Comment {

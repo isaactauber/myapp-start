@@ -6,7 +6,7 @@ import { RootState } from "../../../redux/store";
 export default function ProfilePostList({
   posts,
 }: {
-  posts: RootState["post"]["currentUserPosts"];
+  posts: RootState["post"]["currentHostPosts"];
 }) {
   return (
     <View style={styles.container}>

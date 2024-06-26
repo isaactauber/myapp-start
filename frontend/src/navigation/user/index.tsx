@@ -1,24 +1,25 @@
 import { createMaterialBottomTabNavigator } from "@react-navigation/material-bottom-tabs";
 import { Feather } from "@expo/vector-icons";
-import CameraScreen from "../../screens/camera";
 import ProfileScreen from "../../screens/profile";
 import SearchScreen from "../../screens/search";
 import FeedNavigation from "../feed";
 import { FIREBASE_AUTH } from "../../../firebaseConfig";
-import ChatScreen from "../../screens/chat/list";
 import { useChats } from "../../hooks/useChats";
+import SwitchViewScreen from "../../screens/switchView";
+import MyTicketsScreen from "../../screens/myTickets";
+import UserProfileScreen from "../../screens/userProfile";
 
-export type HomeStackParamList = {
+export type UserViewStackParamList = {
   feed: undefined;
-  Discover: undefined;
-  Add: undefined;
-  Inbox: undefined;
-  Me: { initialUserId: string };
-};
+  search: undefined;
+  switchView: { initialUserId: string };
+  myTickets: { initialUserId: string };
+  profile: { initialUserId: string };
+}
 
-const Tab = createMaterialBottomTabNavigator<HomeStackParamList>();
+const Tab = createMaterialBottomTabNavigator<UserViewStackParamList>();
 
-export default function HomeScreen() {
+export default function UserViewScreen() {
   useChats();
 
   return (
@@ -37,7 +38,7 @@ export default function HomeScreen() {
         }}
       />
       <Tab.Screen
-        name="Discover"
+        name="search"
         component={SearchScreen}
         options={{
           tabBarIcon: ({ color }) => (
@@ -46,17 +47,18 @@ export default function HomeScreen() {
         }}
       />
       <Tab.Screen
-        name="Add"
-        component={CameraScreen}
+        name="switchView"
+        component={SwitchViewScreen}
         options={{
           tabBarIcon: ({ color }) => (
             <Feather name="plus-square" size={24} color={color} />
           ),
         }}
+        initialParams={{ initialUserId: FIREBASE_AUTH.currentUser?.uid ?? "" }}
       />
       <Tab.Screen
-        name="Inbox"
-        component={ChatScreen}
+        name="myTickets"
+        component={MyTicketsScreen}
         options={{
           tabBarIcon: ({ color }) => (
             <Feather name="message-square" size={24} color={color} />
@@ -64,8 +66,8 @@ export default function HomeScreen() {
         }}
       />
       <Tab.Screen
-        name="Me"
-        component={ProfileScreen}
+        name="profile"
+        component={UserProfileScreen}
         options={{
           tabBarIcon: ({ color }) => (
             <Feather name="user" size={24} color={color} />

@@ -1,32 +1,41 @@
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { userAuthStateListener } from "../../redux/slices/authSlice"; // Make sure the path is correct
+import { userAuthStateListener } from "../../redux/slices/authSlice";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import AuthScreen from "../../screens/auth";
 import { AppDispatch, RootState } from "../../redux/store";
-import HomeScreen from "../home";
+import UserViewScreen from "../user";
 import { View } from "react-native";
-import SavePostScreen from "../../screens/savePost";
-import EditProfileScreen from "../../screens/profile/edit";
-import EditProfileFieldScreen from "../../screens/profile/edit/field";
 import Modal from "../../components/modal";
-import FeedScreen from "../../screens/feed";
-import ProfileScreen from "../../screens/profile";
-import ChatSingleScreen from "../../screens/chat/single";
+import SaveEventDetailsScreen from "../../screens/saveEvent";
+import SaveEventDateTime from "../../screens/saveEventDateTime";
+import HostViewScreen from "../host";
+import CreateHostScreen from "../../screens/createHost";
 
-export type RootStackParamList = {
-  home: undefined;
+export type MainStackParamList = {
   auth: undefined;
-  userPosts: { creator: string; profile: boolean };
-  profileOther: { initialUserId: string };
-  savePost: { source: string; sourceThumb: string };
-  editProfile: undefined;
-  editProfileField: { title: string; field: string; value: string };
-  chatSingle: { chatId?: string; contactId?: string };
-};
+  userView: undefined;
+  hostView: { hostId: string, userId: string };
+  saveEventDetails: { 
+    currentHost: string;
+    source: string;
+    sourceThumb: string;
+  };
+  saveEventDateTime: { 
+    currentHost: string;
+    source: string;
+    sourceThumb: string;
+    name: string;
+    description: string;
+    eventType: string;
+    location: string;
+    dateTimes: Date[];
+  };
+  createHost: undefined;
+}
 
-const Stack = createNativeStackNavigator<RootStackParamList>();
+const Stack = createNativeStackNavigator<MainStackParamList>();
 
 export default function Route() {
   const currentUserObj = useSelector((state: RootState) => state.auth);
@@ -53,38 +62,31 @@ export default function Route() {
         ) : (
           <>
             <Stack.Screen
-              name="home"
-              component={HomeScreen}
+              name="userView"
+
+              component={UserViewScreen}
               options={{ headerShown: false }}
             />
             <Stack.Screen
-              name="savePost"
-              component={SavePostScreen}
+              name="hostView"
+              component={HostViewScreen}
+              options={{ headerShown: false }}
+            />
+            {/* CameraScreen did not work well being nested in a Screen.Navigator, 
+              keeping saveEvent screens here for now */}
+            <Stack.Screen
+              name="saveEventDetails"
+              component={SaveEventDetailsScreen}
               options={{ headerShown: false }}
             />
             <Stack.Screen
-              name="userPosts"
-              component={FeedScreen}
+              name="saveEventDateTime"
+              component={SaveEventDateTime}
               options={{ headerShown: false }}
             />
             <Stack.Screen
-              name="profileOther"
-              component={ProfileScreen}
-              options={{ headerShown: false }}
-            />
-            <Stack.Screen
-              name="editProfile"
-              component={EditProfileScreen}
-              options={{ headerShown: false }}
-            />
-            <Stack.Screen
-              name="editProfileField"
-              component={EditProfileFieldScreen}
-              options={{ headerShown: false }}
-            />
-            <Stack.Screen
-              name="chatSingle"
-              component={ChatSingleScreen}
+              name="createHost"
+              component={CreateHostScreen}
               options={{ headerShown: false }}
             />
           </>

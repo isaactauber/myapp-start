@@ -15,8 +15,13 @@ import { Feather } from "@expo/vector-icons";
 
 import styles from "./styles";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import { useNavigation } from "@react-navigation/native";
-import { RootStackParamList } from "../../navigation/main";
+import { RouteProp, useNavigation } from "@react-navigation/native";
+import { MainStackParamList } from "../../navigation/main";
+import { HostViewStackParamList } from "../../navigation/host";
+
+interface CameraScreenProps {
+  route: RouteProp<HostViewStackParamList, "create">;
+}
 
 /**
  * Function that renders a component responsible showing
@@ -24,7 +29,7 @@ import { RootStackParamList } from "../../navigation/main";
  * letting the user pick a video from the gallery
  * @returns Functional Component
  */
-export default function CameraScreen() {
+export default function CameraScreen({ route }: CameraScreenProps) {
   const [hasCameraPermissions, setHasCameraPermissions] = useState(false);
   const [hasAudioPermissions, setHasAudioPermissions] = useState(false);
   const [hasGalleryPermissions, setHasGalleryPermissions] = useState(false);
@@ -39,7 +44,8 @@ export default function CameraScreen() {
   const isFocused = useIsFocused();
 
   const navigation =
-    useNavigation<NativeStackNavigationProp<RootStackParamList>>();
+    useNavigation<NativeStackNavigationProp<MainStackParamList>>();
+
   useEffect(() => {
     (async () => {
       const cameraStatus = await requestCameraPermissionsAsync();
@@ -73,10 +79,13 @@ export default function CameraScreen() {
         if (videoRecordPromise) {
           const data = await videoRecordPromise;
           const source = data.uri;
-          console.warn("sourceval {}", source);
           let sourceThumb = await generateThumbnail(source);
           if (sourceThumb) {
-            navigation.navigate("savePost", { source, sourceThumb });
+            navigation.navigate("saveEventDetails", { 
+              currentHost: route.params.currentHost,
+              source,
+              sourceThumb
+            });
           }
         }
       } catch (error) {
@@ -98,13 +107,13 @@ export default function CameraScreen() {
       aspect: [16, 9],
       quality: 1,
     });
-    console.warn("sourceval {}", result.assets[0].uri);
     if (!result.canceled) {
       const sourceThumb = await generateThumbnail(result.assets[0].uri);
       if (sourceThumb) {
-        navigation.navigate("savePost", {
+        navigation.navigate("saveEventDetails", {
+          currentHost: route.params.currentHost,
           source: result.assets[0].uri,
-          sourceThumb,
+          sourceThumb
         });
       }
     }
