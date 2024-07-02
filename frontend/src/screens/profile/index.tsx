@@ -16,6 +16,8 @@ import EditProfileScreen from "./edit";
 import EditProfileFieldScreen from "./edit/field";
 import { HostViewStackParamList } from "../../navigation/host";
 import { getHostById } from "../../services/host";
+import CreateHostingCompanyScreen from "../createHostingCompany";
+import { FIREBASE_AUTH } from "../../../firebaseConfig";
 
 export type ProfileStackParamList = {
   userPosts: { creator: string; profile: boolean };
