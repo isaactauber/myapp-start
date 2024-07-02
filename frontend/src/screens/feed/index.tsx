@@ -2,21 +2,23 @@ import { FlatList, View, Dimensions, ViewToken, StyleSheet } from "react-native"
 import styles from "./styles";
 import PostSingle, { PostSingleHandles } from "../../components/general/post";
 import { useContext, useEffect, useRef, useState } from "react";
-import { getFeed, getPostsByUserId } from "../../services/posts";
+import { getFeed, getPostsByHostId } from "../../services/posts";
 import { Post } from "../../../types";
 import { RouteProp } from "@react-navigation/native";
-import { RootStackParamList } from "../../navigation/main";
-import { HomeStackParamList } from "../../navigation/home";
+import { UserViewStackParamList } from "../../navigation/user";
+import { HostViewStackParamList } from "../../navigation/host";
 import {
   CurrentUserProfileItemInViewContext,
   FeedStackParamList,
 } from "../../navigation/feed";
 import useMaterialNavBarHeight from "../../hooks/useMaterialNavBarHeight";
 import { useIsFocused } from '@react-navigation/native';
+import { ProfileStackParamList } from "../profile";
 
 type FeedScreenRouteProp =
-  | RouteProp<RootStackParamList, "userPosts">
-  | RouteProp<HomeStackParamList, "feed">
+  | RouteProp<HostViewStackParamList, "hostPosts">
+  | RouteProp<ProfileStackParamList, "userPosts">
+  | RouteProp<UserViewStackParamList, "feed">
   | RouteProp<FeedStackParamList, "feedList">;
 
 interface PostViewToken extends ViewToken {
@@ -33,7 +35,7 @@ export default function FeedScreen({ route }: { route: FeedScreenRouteProp }) {
 
   useEffect(() => {
     if (profile && creator) {
-      getPostsByUserId(creator).then(setPosts);
+      getPostsByHostId(creator).then(setPosts);
     } else {
       getFeed().then(setPosts);
     }

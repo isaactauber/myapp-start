@@ -9,119 +9,119 @@ import {
   where,
 } from "firebase/firestore";
 import { PayloadAction, createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { Company } from "../../../types";
+import { Host } from "../../../types";
 
-interface CompanyState {
+interface HostState {
   loading: boolean;
   error: string | null;
-  currentUserCompanies: Company[] | null;
+  currentUserHosts: Host[] | null;
 }
 
-const initialState: CompanyState = {
+const initialState: HostState = {
   loading: false,
   error: null,
-  currentUserCompanies: null,
+  currentUserHosts: null,
 };
 
-interface CreateCompanyReturnType {
-  companyId: string;
+interface CreateHostReturnType {
+  hostId: string;
 }
 
-interface CreateCompanyArgs {
+interface CreateHostArgs {
   description: string;
-  companyName: string;
-  companyType: string;
+  hostName: string;
+  hostType: string;
 }
 
-export const createCompany = createAsyncThunk<CreateCompanyReturnType, CreateCompanyArgs>(
-  "company/create",
-  async ({ description, companyName, companyType }, { rejectWithValue }) => {
+export const createHost = createAsyncThunk<CreateHostReturnType, CreateHostArgs>(
+  "host/create",
+  async ({ description, hostName, hostType }, { rejectWithValue }) => {
     try {
       if (!FIREBASE_AUTH.currentUser) {
         throw new Error("User not authenticated");
       }
 
-      const docRef = await addDoc(collection(FIREBASE_DB, "company"), {
+      const docRef = await addDoc(collection(FIREBASE_DB, "host"), {
         creator: FIREBASE_AUTH.currentUser.uid,
         description,
-        companyName,
-        companyType,
+        hostName,
+        hostType,
         creation: serverTimestamp(),
       });
 
-      return { companyId: docRef.id };
+      return { hostId: docRef.id };
     } catch (error) {
       return rejectWithValue(error);
     }
   }
 );
 
-export const getCompanyByUser = createAsyncThunk(
-  "company/getCompanyByUser",
+export const getHostByUser = createAsyncThunk(
+  "host/getHostByUser",
   async (uid: string, { dispatch, rejectWithValue }) => {
     try {
       // Create a query against the collection.
       const q = query(
-        collection(FIREBASE_DB, "company"),
+        collection(FIREBASE_DB, "host"),
         where("creator", "==", uid),
         orderBy("creation", "desc"),
       );
 
       const querySnapshot = await getDocs(q);
 
-      // Map over the snapshot to get the array of company
-      const companies = querySnapshot.docs.map((doc) => {
+      // Map over the snapshot to get the array of host
+      const hosts = querySnapshot.docs.map((doc) => {
         const data = doc.data();
         const id = doc.id;
-        return { id, ...data } as Company;
+        return { id, ...data } as Host;
       });
       // Dispatch action to update the state. Replace `CURRENT_USER_COMPANIES_UPDATE` with the actual action creator
-      dispatch({ type: "CURRENT_USER_COMPANIES_UPDATE", payload: companies });
+      dispatch({ type: "CURRENT_USER_COMPANIES_UPDATE", payload: hosts });
 
-      return companies; // Return companies as fulfilled payload
+      return hosts; // Return hosts as fulfilled payload
     } catch (error) {
-      console.error("Failed to get companies: ", error);
+      console.error("Failed to get hosts: ", error);
       return rejectWithValue(error);
     }
   },
 );
 
-const companySlice = createSlice({
-  name: "company",
+const hostSlice = createSlice({
+  name: "host",
   initialState,
   reducers: {
     // Add synchronous reducers here if needed
   },
   extraReducers: (builder) => {
     builder
-      .addCase(createCompany.pending, (state) => {
+      .addCase(createHost.pending, (state) => {
         state.loading = true;
         state.error = null;
       })
-      .addCase(createCompany.fulfilled, (state) => {
+      .addCase(createHost.fulfilled, (state) => {
         state.loading = false;
         state.error = null;
       })
-      .addCase(createCompany.rejected, (state, action) => {
+      .addCase(createHost.rejected, (state, action) => {
         state.loading = false;
         state.error = action.error.message || null;
       })
-      .addCase(getCompanyByUser.pending, (state) => {
+      .addCase(getHostByUser.pending, (state) => {
         state.loading = true;
         state.error = null;
       })
       .addCase(
-        getCompanyByUser.fulfilled,
-        (state, action: PayloadAction<Company[]>) => {
+        getHostByUser.fulfilled,
+        (state, action: PayloadAction<Host[]>) => {
           state.loading = false;
-          state.currentUserCompanies = action.payload;
+          state.currentUserHosts = action.payload;
         },
       )
-      .addCase(getCompanyByUser.rejected, (state, action) => {
+      .addCase(getHostByUser.rejected, (state, action) => {
         state.loading = false;
         state.error = action.error.message || null;
       });
   },
 });
 
-export default companySlice.reducer;
+export default hostSlice.reducer;

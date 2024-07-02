@@ -4,12 +4,12 @@ import { Feather } from "@expo/vector-icons";
 import { RouteProp, useNavigation } from "@react-navigation/native";
 import styles from "./styles";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import { RootStackParamList } from "../../navigation/main";
+import { MainStackParamList } from "../../navigation/main";
 import { Picker } from "@react-native-picker/picker";
 import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
 
 interface SaveEventDetailsProps {
-  route: RouteProp<RootStackParamList, "saveEventDetails">;
+  route: RouteProp<MainStackParamList, "saveEventDetails">;
 }
 
 enum EventTypes {
@@ -28,13 +28,13 @@ export default function SaveEventDetailsScreen({ route }: SaveEventDetailsProps)
   const [eventType, setEventType] = useState('');
   const [location, setLocation] = useState('');
   let dateTimes: Date[] = [];
-  const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
+  const navigation = useNavigation<NativeStackNavigationProp<MainStackParamList>>();
 
   const handleSaveEvent = () => {
+    const currentHost = route.params.currentHost;
     const source = route.params.source;
     const sourceThumb = route.params.sourceThumb;
-    const eventCompany = route.params.eventCompany
-    navigation.navigate("saveEventDateTime", { source, sourceThumb, eventCompany, name, description, eventType, location, dateTimes });
+    navigation.navigate("saveEventDateTime", { currentHost, source, sourceThumb, name, description, eventType, location, dateTimes });
   };
 
   return (

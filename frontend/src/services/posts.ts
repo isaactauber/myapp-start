@@ -134,18 +134,18 @@ export const clearCommentListener = () => {
   }
 };
 
-export const getPostsByUserId = (
-  uid = FIREBASE_AUTH.currentUser?.uid,
+export const getPostsByHostId = (
+  uid: string,
 ): Promise<Post[]> => {
   return new Promise((resolve, reject) => {
     if (!uid) {
-      reject(new Error("User ID is not set"));
+      reject(new Error("Host ID is not set"));
       return;
     }
 
     const q = query(
       collection(FIREBASE_DB, "post"),
-      where("creator", "==", uid),
+      where("creatorHost", "==", uid),
       orderBy("creation", "desc"),
     );
 

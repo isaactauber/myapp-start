@@ -1,9 +1,7 @@
 import React, { useState } from "react";
 import {
   ActivityIndicator,
-  Image,
   Text,
-  TextInput,
   TouchableOpacity,
   View,
   Platform,
@@ -16,13 +14,13 @@ import { createEvent } from "../../redux/slices/eventSlice";
 import { useNavigation } from "@react-navigation/native";
 import { RouteProp } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import { RootStackParamList } from "../../navigation/main";
+import { MainStackParamList } from "../../navigation/main";
 import { AppDispatch } from "../../redux/store";
-import { HomeStackParamList } from "../../navigation/home";
+import { HostViewStackParamList } from "../../navigation/host";
 import { createPost } from "../../redux/slices/postSlice";
 
 interface SaveEventDateTimeProps {
-  route: RouteProp<RootStackParamList, "saveEventDateTime">;
+  route: RouteProp<MainStackParamList, "saveEventDateTime">;
 }
 
 interface CreateEventReturnType {
@@ -36,20 +34,19 @@ export default function SaveEventDateTime({ route }: SaveEventDateTimeProps) {
   const [dateTimes, setDateTimes] = useState<Date[]>([]);
 
 
-  const homeNavigation = useNavigation<NativeStackNavigationProp<HomeStackParamList>>();
-  const rootNavigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
+  const hostNavigation = useNavigation<NativeStackNavigationProp<HostViewStackParamList>>();
+  const rootNavigation = useNavigation<NativeStackNavigationProp<MainStackParamList>>();
   const dispatch: AppDispatch = useDispatch();
 
   const handleSaveEvent = async () => {
     try {
       setRequestRunning(true);
-      console.log("dateTimes: " + route.params.dateTimes);
       setDateTimes(route.params.dateTimes.concat(date));
       
       // Dispatch createEvent and assert the return type
       const actionResult = await dispatch(
         createEvent({
-          eventCompany: route.params.eventCompany,
+          creatorHost: route.params.currentHost,
           eventName: route.params.name,
           description: route.params.description,
           dateTimes: dateTimes,
@@ -57,19 +54,18 @@ export default function SaveEventDateTime({ route }: SaveEventDateTimeProps) {
           location: route.params.location
         })
       );
-  
       // Use a type guard to safely access the payload
       if ('payload' in actionResult && actionResult.payload) {
         const { eventId } = actionResult.payload as CreateEventReturnType;
         await dispatch(
           createPost({
+            creatorHost: route.params.currentHost,
             event: eventId,
             video: route.params.source,
             thumbnail: route.params.sourceThumb,
           }),
         );
-        
-        homeNavigation.navigate("feed");
+        hostNavigation.navigate("home", { currentHost: route.params.currentHost });
       } else {
         throw new Error("Event creation failed, event ID not found.");
       }
@@ -79,17 +75,16 @@ export default function SaveEventDateTime({ route }: SaveEventDateTimeProps) {
     }
   };
   
-
+  // TODO: I dont think handing date times is working correctly
   const handleAddAnotherDate = () => {
     if (route.params.dateTimes)
       setDateTimes(route.params.dateTimes.concat(date));
     else
       setDateTimes([date]);
-    console.log("dateTimes: " + dateTimes);
     rootNavigation.navigate("saveEventDateTime", { 
+      currentHost: route.params.currentHost,
       source: route.params.source, 
       sourceThumb: route.params.sourceThumb,
-      eventCompany: route.params.eventCompany,
       name: route.params.name,
       description: route.params.description,
       eventType: route.params.eventType,
@@ -101,7 +96,6 @@ export default function SaveEventDateTime({ route }: SaveEventDateTimeProps) {
     const currentDate = selectedDate || date;
     setShowDatePicker(Platform.OS === 'ios');
     setDate(currentDate);
-    console.log("date: " + date);
 };
 
 
@@ -135,7 +129,7 @@ export default function SaveEventDateTime({ route }: SaveEventDateTimeProps) {
       </View>
       <View style={styles.buttonsContainer}>
         <TouchableOpacity
-          onPress={() => homeNavigation.goBack()}
+          onPress={() => hostNavigation.goBack()}
           style={styles.cancelButton}
         >
           <Feather name="x" size={24} color="black" />

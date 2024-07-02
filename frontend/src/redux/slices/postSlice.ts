@@ -16,23 +16,25 @@ import { Post } from "../../../types";
 interface PostState {
   loading: boolean;
   error: string | null;
-  currentUserPosts: Post[] | null;
+  currentHostPosts: Post[] | null;
 }
 
 const initialState: PostState = {
   loading: false,
   error: null,
-  currentUserPosts: null,
+  currentHostPosts: null,
 };
 
 export const createPost = createAsyncThunk(
   "post/create",
   async (
     {
+      creatorHost,
       event,
       video,
       thumbnail,
     }: {
+      creatorHost: string;
       event: string;
       video: string;
       thumbnail: string;
@@ -45,16 +47,17 @@ export const createPost = createAsyncThunk(
         const [videoDownloadUrl, thumbnailDownloadUrl] = await Promise.all([
           saveMediaToStorage(
             video,
-            `post/${FIREBASE_AUTH.currentUser.uid}/${storagePostId}/video`,
+            `post/${creatorHost}/${storagePostId}/video`,
           ),
           saveMediaToStorage(
             thumbnail,
-            `post/${FIREBASE_AUTH.currentUser.uid}/${storagePostId}/thumbnail`,
+            `post/${creatorHost}/${storagePostId}/thumbnail`,
           ),
         ]);
 
         await addDoc(collection(FIREBASE_DB, "post"), {
-          creator: FIREBASE_AUTH.currentUser.uid,
+          creatorUser: FIREBASE_AUTH.currentUser.uid,
+          creatorHost,
           media: [videoDownloadUrl, thumbnailDownloadUrl],
           event,
           likesCount: 0,
@@ -71,14 +74,14 @@ export const createPost = createAsyncThunk(
   },
 );
 
-export const getPostsByUser = createAsyncThunk(
-  "post/getPostsByUser",
+export const getPostsByHost = createAsyncThunk(
+  "post/getPostsByHost",
   async (uid: string, { dispatch, rejectWithValue }) => {
     try {
       // Create a query against the collection.
       const q = query(
         collection(FIREBASE_DB, "post"),
-        where("creator", "==", uid),
+        where("creatorHost", "==", uid),
         orderBy("creation", "desc"),
       );
 
@@ -90,8 +93,8 @@ export const getPostsByUser = createAsyncThunk(
         const id = doc.id;
         return { id, ...data } as Post;
       });
-      // Dispatch action to update the state. Replace `CURRENT_USER_POSTS_UPDATE` with the actual action creator
-      dispatch({ type: "CURRENT_USER_POSTS_UPDATE", payload: posts });
+      // Dispatch action to update the state. Replace `CURRENT_HOST_POSTS_UPDATE` with the actual action creator
+      dispatch({ type: "CURRENT_HOST_POSTS_UPDATE", payload: posts });
 
       return posts; // Return posts as fulfilled payload
     } catch (error) {
@@ -121,18 +124,18 @@ const postSlice = createSlice({
         state.loading = false;
         state.error = action.error.message || null;
       })
-      .addCase(getPostsByUser.pending, (state) => {
+      .addCase(getPostsByHost.pending, (state) => {
         state.loading = true;
         state.error = null;
       })
       .addCase(
-        getPostsByUser.fulfilled,
+        getPostsByHost.fulfilled,
         (state, action: PayloadAction<Post[]>) => {
           state.loading = false;
-          state.currentUserPosts = action.payload;
+          state.currentHostPosts = action.payload;
         },
       )
-      .addCase(getPostsByUser.rejected, (state, action) => {
+      .addCase(getPostsByHost.rejected, (state, action) => {
         state.loading = false;
         state.error = action.error.message || null;
       });

@@ -10,12 +10,12 @@ import { useSelector } from "react-redux";
 import { useNavigation } from "@react-navigation/native";
 import { RootState } from "../../../redux/store";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import { RootStackParamList } from "../../../navigation/main";
+import { ProfileStackParamList } from "../../../screens/profile";
 
 export default function EditProfileScreen() {
   const auth = useSelector((state: RootState) => state.auth);
   const navigation =
-    useNavigation<NativeStackNavigationProp<RootStackParamList>>();
+    useNavigation<NativeStackNavigationProp<ProfileStackParamList>>();
 
   const chooseImage = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({

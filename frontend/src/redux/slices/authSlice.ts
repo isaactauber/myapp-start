@@ -5,7 +5,7 @@ import {
 } from "firebase/auth";
 import { FIREBASE_AUTH, FIREBASE_DB } from "../../../firebaseConfig";
 import { doc, onSnapshot } from "firebase/firestore";
-import { getPostsByUser } from "./postSlice";
+import { getPostsByHost } from "./postSlice";
 import { User } from "../../../types";
 
 export const userAuthStateListener = createAsyncThunk(
@@ -14,7 +14,7 @@ export const userAuthStateListener = createAsyncThunk(
     FIREBASE_AUTH.onAuthStateChanged((user) => {
       if (user) {
         dispatch(getCurrentUserData());
-        dispatch(getPostsByUser(user.uid));
+        dispatch(getPostsByHost(user.uid));
       } else {
         dispatch(setUserState({ currentUser: null, loaded: true }));
       }
