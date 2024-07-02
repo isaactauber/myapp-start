@@ -32,7 +32,7 @@ export type MainStackParamList = {
     location: string;
     dateTimes: Date[];
   };
-  createHost: undefined;
+  createHost: { userId: string };
 }
 
 const Stack = createNativeStackNavigator<MainStackParamList>();

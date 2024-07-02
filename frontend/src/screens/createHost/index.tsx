@@ -32,7 +32,7 @@ export default function CreateHostScreen({ route }: CreateHostProps) {
   const dispatch: AppDispatch = useDispatch();
 
   const handleSaveHost = async () => {
-    await dispatch(
+    const resultAction = await dispatch(
       createHost({
         hostName: name,
         description: description,
@@ -40,7 +40,10 @@ export default function CreateHostScreen({ route }: CreateHostProps) {
       })
     );
 
-    navigation.goBack()
+    if (createHost.fulfilled.match(resultAction)) {
+      const returnedHostId = resultAction.payload.hostId;
+      navigation.navigate("hostView", { hostId: returnedHostId, userId: route.params.userId });
+    }
   };
 
   return (

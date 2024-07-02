@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
-import { RouteProp, useNavigation } from "@react-navigation/native";
+import { RouteProp, useNavigation, useIsFocused } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { Feather } from "@expo/vector-icons";
 import { MainStackParamList } from "../../navigation/main";
@@ -22,6 +22,8 @@ export default function SwitchViewScreen({ route }: SwitchViewScreenProps) {
   const [eventHost, setEventHost] = useState('');
   const [userId, setUserId] = useState('');
   const navigation = useNavigation<NativeStackNavigationProp<MainStackParamList>>();
+  const isFocused = useIsFocused();
+
 
   const { initialUserId } = route.params;
   const providerUserId = useContext(CurrentUserProfileItemInViewContext);
@@ -37,7 +39,7 @@ export default function SwitchViewScreen({ route }: SwitchViewScreenProps) {
   };
 
   const handleCreateNewHost = () => {
-    navigation.navigate("createHost");
+    navigation.navigate("createHost", {userId: userId});
   };
 
   useEffect(() => {
@@ -45,14 +47,16 @@ export default function SwitchViewScreen({ route }: SwitchViewScreenProps) {
       return;
     }
 
-    getHostsByUserId(user?.uid).then((hosts) => {
-      setUserHosts(hosts);
-      if (hosts.length > 0) {
-        setEventHost(hosts[0].id);
-      }
-    });
-    setUserId(user?.uid);
-  }, [user]);
+    if (isFocused) {
+      getHostsByUserId(user?.uid).then((hosts) => {
+        setUserHosts(hosts);
+        if (hosts.length > 0) {
+          setEventHost(hosts[0].id);
+        }
+      });
+      setUserId(user?.uid);
+    }
+  }, [isFocused, user]);
 
   return (
     <View style={styles.container}>
