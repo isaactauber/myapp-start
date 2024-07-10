@@ -20,6 +20,17 @@ export interface Event {
   description: string;
   location: string;
   creation: string;
+  guestList: string[];
+  availableTickets: number;
+}
+
+export interface Ticket {
+  id: string;
+  eventId: string;
+  userID: string;
+  uniqueEventId: string;
+  timestamp: Date;
+  qrCodeData: JSON;
 }
 
 export interface Host {
