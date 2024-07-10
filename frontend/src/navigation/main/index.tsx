@@ -30,6 +30,7 @@ export type MainStackParamList = {
     description: string;
     eventType: string;
     location: string;
+    availableTickets: number;
     dateTimes: Date[];
   };
   createHost: { userId: string };

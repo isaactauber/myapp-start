@@ -6,7 +6,6 @@ import ProfilePostList from "../../components/profile/postList";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useState, useContext, useEffect } from "react";
 import { CurrentUserProfileItemInViewContext, FeedStackParamList } from "../../navigation/feed";
-import { useUser } from "../../hooks/useUser";
 import { getPostsByHostId } from "../../services/posts";
 import { Host, Post } from "../../../types";
 import { RouteProp } from "@react-navigation/native";
@@ -16,8 +15,7 @@ import EditProfileScreen from "./edit";
 import EditProfileFieldScreen from "./edit/field";
 import { HostViewStackParamList } from "../../navigation/host";
 import { getHostById } from "../../services/host";
-import CreateHostingCompanyScreen from "../createHostingCompany";
-import { FIREBASE_AUTH } from "../../../firebaseConfig";
+
 
 export type ProfileStackParamList = {
   userPosts: { creator: string; profile: boolean };

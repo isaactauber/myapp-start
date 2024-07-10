@@ -51,7 +51,8 @@ export default function SaveEventDateTime({ route }: SaveEventDateTimeProps) {
           description: route.params.description,
           dateTimes: dateTimes,
           eventType: route.params.eventType,
-          location: route.params.location
+          location: route.params.location,
+          availableTickets: route.params.availableTickets,
         })
       );
       // Use a type guard to safely access the payload
@@ -89,6 +90,7 @@ export default function SaveEventDateTime({ route }: SaveEventDateTimeProps) {
       description: route.params.description,
       eventType: route.params.eventType,
       location: route.params.location,
+      availableTickets: route.params.availableTickets,
       dateTimes: dateTimes });
   };
 
