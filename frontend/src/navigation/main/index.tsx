@@ -12,6 +12,7 @@ import SaveEventDetailsScreen from "../../screens/saveEvent";
 import SaveEventDateTime from "../../screens/saveEventDateTime";
 import HostViewScreen from "../host";
 import CreateHostScreen from "../../screens/createHost";
+import BuyTicketScreen from "../../screens/buyTicket";
 
 export type MainStackParamList = {
   auth: undefined;
@@ -34,6 +35,7 @@ export type MainStackParamList = {
     dateTimes: Date[];
   };
   createHost: { userId: string };
+  buyTicket: { eventId: string, userId: string };
 }
 
 const Stack = createNativeStackNavigator<MainStackParamList>();
@@ -88,6 +90,11 @@ export default function Route() {
             <Stack.Screen
               name="createHost"
               component={CreateHostScreen}
+              options={{ headerShown: false }}
+            />
+            <Stack.Screen
+              name="buyTicket"
+              component={BuyTicketScreen}
               options={{ headerShown: false }}
             />
           </>

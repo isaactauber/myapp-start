@@ -22,15 +22,17 @@ export interface Event {
   creation: string;
   guestList: string[];
   availableTickets: number;
+  //TODO `maxTicketsPerPerson: number
 }
 
 export interface Ticket {
   id: string;
   eventId: string;
+  eventName: string;
   userID: string;
   uniqueEventId: string;
   timestamp: Date;
-  qrCodeData: JSON;
+  qrCodeData: string;
 }
 
 export interface Host {

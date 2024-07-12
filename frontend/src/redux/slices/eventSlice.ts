@@ -2,6 +2,8 @@ import { FIREBASE_AUTH, FIREBASE_DB } from "../../../firebaseConfig";
 import {
   addDoc,
   collection,
+  doc,
+  getDoc,
   getDocs,
   orderBy,
   query,
@@ -124,6 +126,61 @@ export const getAllEvents = createAsyncThunk(
   },
 );
 
+export const getAvailableTicketsByEvent = createAsyncThunk(
+  "event/getAvailableTicketsByEvent",
+  async (eventId: string, { rejectWithValue }) => {
+    try {
+      // Create a reference to the event document
+      const eventDocRef = doc(FIREBASE_DB, "event", eventId);
+
+      // Fetch the document
+      const eventDocSnapshot = await getDoc(eventDocRef);
+
+      if (!eventDocSnapshot.exists()) {
+        throw new Error("Event not found");
+      }
+
+      // Extract the availableTickets field from the document data
+      const eventData = eventDocSnapshot.data();
+      const availableTickets = eventData?.availableTickets;
+
+      if (availableTickets === undefined) {
+        throw new Error("availableTickets field not found in the event document");
+      }
+
+      return availableTickets; // Return availableTickets as fulfilled payload
+    } catch (error) {
+      console.error("Failed to get available tickets: ", error);
+      return rejectWithValue(error);
+    }
+  }
+);
+
+export const getEventById = createAsyncThunk(
+  "event/getEventById",
+  async (eventId: string, { rejectWithValue }) => {
+    try {
+      // Create a reference to the event document
+      const eventDocRef = doc(FIREBASE_DB, "event", eventId);
+
+      // Fetch the document
+      const eventDocSnapshot = await getDoc(eventDocRef);
+
+      if (!eventDocSnapshot.exists()) {
+        throw new Error("Event not found");
+      }
+
+      // Extract the event data from the document
+      const eventData = eventDocSnapshot.data() as Event;
+
+      return { event: eventDocSnapshot.id, ...eventData }; // Return event as fulfilled payload
+    } catch (error) {
+      console.error("Failed to get event: ", error);
+      return rejectWithValue(error);
+    }
+  }
+);
+
 const eventSlice = createSlice({
   name: "event",
   initialState,
@@ -156,6 +213,52 @@ const eventSlice = createSlice({
         },
       )
       .addCase(getEventsByHost.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error.message || null;
+      })
+      .addCase(getAllEvents.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(
+        getAllEvents.fulfilled,
+        (state, action: PayloadAction<Event[]>) => {
+          state.loading = false;
+          state.events = action.payload;
+        },
+      )
+      .addCase(getAllEvents.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error.message || null;
+      })
+      .addCase(getAvailableTicketsByEvent.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(
+        getAvailableTicketsByEvent.fulfilled,
+        (state, action: PayloadAction<number>) => {
+          state.loading = false;
+          state.error = null;
+          // Handle the available tickets data if necessary
+        },
+      )
+      .addCase(getAvailableTicketsByEvent.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error.message || null;
+      })
+      .addCase(getEventById.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(
+        getEventById.fulfilled,
+        (state, action: PayloadAction<Event>) => {
+          state.loading = false;
+          state.events = [action.payload]; // Optionally update the state with the fetched event
+        },
+      )
+      .addCase(getEventById.rejected, (state, action) => {
         state.loading = false;
         state.error = action.error.message || null;
       });
