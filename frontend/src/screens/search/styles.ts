@@ -1,4 +1,5 @@
 import { StyleSheet } from "react-native";
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -9,6 +10,14 @@ const styles = StyleSheet.create({
     backgroundColor: "lightgray",
     padding: 5,
     borderRadius: 4,
+  },
+  itemContainer: {
+    padding: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: "lightgray",
+  },
+  itemText: {
+    fontSize: 18,
   },
 });
 

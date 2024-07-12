@@ -14,7 +14,7 @@ export interface Event {
   id: string;
   creatorUser: string;
   creatorHost: string;
-  name: string;
+  eventName: string;
   eventType: string;
   dateTimes: Date[];
   description: string;

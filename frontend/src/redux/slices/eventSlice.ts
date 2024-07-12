@@ -12,6 +12,7 @@ import { PayloadAction, createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { Event } from "../../../types";
 
 interface EventState {
+  events: any;
   loading: boolean;
   error: string | null;
   currentHostEvents: Event[] | null;
@@ -21,6 +22,7 @@ const initialState: EventState = {
   loading: false,
   error: null,
   currentHostEvents: null,
+  events: [],
 };
 
 interface CreateEventReturnType {
@@ -84,6 +86,35 @@ export const getEventsByHost = createAsyncThunk(
       });
       // Dispatch action to update the state. Replace `CURRENT_USER_EVENTS_UPDATE` with the actual action creator
       dispatch({ type: "CURRENT_USER_EVENTS_UPDATE", payload: events });
+
+      return events; // Return events as fulfilled payload
+    } catch (error) {
+      console.error("Failed to get events: ", error);
+      return rejectWithValue(error);
+    }
+  },
+);
+
+export const getAllEvents = createAsyncThunk(
+  "event/getAllEvents",
+  async (_, { dispatch, rejectWithValue }) => {
+    try {
+      // Create a query against the collection.
+      const q = query(
+        collection(FIREBASE_DB, "event"),
+        orderBy("creation", "desc"),
+      );
+
+      const querySnapshot = await getDocs(q);
+
+      // Map over the snapshot to get the array of events
+      const events = querySnapshot.docs.map((doc) => {
+        const data = doc.data();
+        const id = doc.id;
+        return { id, ...data } as Event;
+      });
+      // Dispatch action to update the state. Replace `All_EVENTS_UPDATE` with the actual action creator
+      dispatch({ type: "All_EVENTS_UPDATE", payload: events });
 
       return events; // Return events as fulfilled payload
     } catch (error) {
