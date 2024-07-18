@@ -4,7 +4,7 @@ import { RouteProp, useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useDispatch } from 'react-redux';
 import { AppDispatch } from '../../redux/store';
-import { getAvailableTicketsByEvent } from "../../redux/slices/eventSlice";
+import { getAvailableTicketsByEvent, updateAvailableTickets, appendToGuestList } from "../../redux/slices/eventSlice";
 import { createTicket } from "../../redux/slices/ticketSlice";
 import { MainStackParamList } from '../../navigation/main';
 import { UserViewStackParamList } from '../../navigation/user';
@@ -52,7 +52,11 @@ export default function BuyTicketScreen({ route }: BuyTicketProps) {
       }
     }
 
-    navigation.navigate("myTickets", {initialUserId: userId});
+    await dispatch(updateAvailableTickets({ eventId, numberOfTickets: availableTickets - ticketsToBuy }));
+
+    await dispatch(appendToGuestList({ eventId, userId, ticketsToBuy }));
+
+    navigation.navigate("myTickets", { initialUserId: userId });
   };
 
   return (

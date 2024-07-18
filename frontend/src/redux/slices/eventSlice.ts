@@ -5,6 +5,7 @@ import {
   doc,
   getDoc,
   getDocs,
+  updateDoc,
   orderBy,
   query,
   serverTimestamp,
@@ -181,6 +182,95 @@ export const getEventById = createAsyncThunk(
   }
 );
 
+export const updateAvailableTickets = createAsyncThunk(
+  "event/updateAvailableTickets",
+  async ({ eventId, numberOfTickets }: { eventId: string, numberOfTickets: number }, { rejectWithValue }) => {
+    try {
+      // Create a reference to the event document
+      const eventDocRef = doc(FIREBASE_DB, "event", eventId);
+
+      // Fetch the document
+      const eventDocSnapshot = await getDoc(eventDocRef);
+
+      if (!eventDocSnapshot.exists()) {
+        throw new Error("Event not found");
+      }
+
+      // Update the availableTickets field
+      await updateDoc(eventDocRef, {
+        availableTickets: numberOfTickets,
+      });
+
+      return { eventId, numberOfTickets };
+    } catch (error) {
+      console.error("Failed to update available tickets: ", error);
+      return rejectWithValue(error);
+    }
+  }
+);
+
+export const appendToGuestList = createAsyncThunk(
+  "event/appendToGuestList",
+  async ({ eventId, userId, ticketsToBuy }: { eventId: string, userId: string, ticketsToBuy: number }, { rejectWithValue }) => {
+    try {
+      // Create a reference to the event document
+      const eventDocRef = doc(FIREBASE_DB, "event", eventId);
+
+      // Fetch the document
+      const eventDocSnapshot = await getDoc(eventDocRef);
+
+      if (!eventDocSnapshot.exists()) {
+        throw new Error("Event not found");
+      }
+
+      // Append the ticketsToBuy to the guestList field
+      const eventData = eventDocSnapshot.data() as Event;
+      const updatedGuestList = { ...eventData.guestList };
+
+      if (updatedGuestList[userId]) {
+        updatedGuestList[userId] += ticketsToBuy;
+      } else {
+        updatedGuestList[userId] = ticketsToBuy;
+      }
+
+      await updateDoc(eventDocRef, {
+        guestList: updatedGuestList,
+      });
+
+      return { eventId, guestList: updatedGuestList };
+    } catch (error) {
+      console.error("Failed to append to guest list: ", error);
+      return rejectWithValue(error);
+    }
+  }
+);
+
+export const getGuestListByEventId = createAsyncThunk(
+  "event/getGuestListByEventId",
+  async (eventId: string, { rejectWithValue }) => {
+    try {
+      // Create a reference to the event document
+      const eventDocRef = doc(FIREBASE_DB, "event", eventId);
+
+      // Fetch the document
+      const eventDocSnapshot = await getDoc(eventDocRef);
+
+      if (!eventDocSnapshot.exists()) {
+        throw new Error("Event not found");
+      }
+
+      // Extract the guestList map from the document data
+      const eventData = eventDocSnapshot.data() as Event;
+      const guestList = eventData.guestList;
+
+      return guestList; // Return guestList as fulfilled payload
+    } catch (error) {
+      console.error("Failed to get guest list: ", error);
+      return rejectWithValue(error);
+    }
+  }
+);
+
 const eventSlice = createSlice({
   name: "event",
   initialState,
@@ -261,8 +351,48 @@ const eventSlice = createSlice({
       .addCase(getEventById.rejected, (state, action) => {
         state.loading = false;
         state.error = action.error.message || null;
+      })
+      .addCase(updateAvailableTickets.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(updateAvailableTickets.fulfilled, (state) => {
+        state.loading = false;
+        state.error = null;
+      })
+      .addCase(updateAvailableTickets.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error.message || null;
+      })
+      .addCase(appendToGuestList.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(appendToGuestList.fulfilled, (state) => {
+        state.loading = false;
+        state.error = null;
+      })
+      .addCase(appendToGuestList.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error.message || null;
+      })
+      .addCase(getGuestListByEventId.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(
+        getGuestListByEventId.fulfilled,
+        (state, action: PayloadAction<Record<string, number>>) => {
+          state.loading = false;
+          // You can handle the guest list data here if needed
+        },
+      )
+      .addCase(getGuestListByEventId.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error.message || null;
       });
   },
 });
 
 export default eventSlice.reducer;
+
