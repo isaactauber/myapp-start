@@ -61,6 +61,10 @@ export const createEvent = createAsyncThunk<CreateEventReturnType, CreateEventAr
         guestList: [],
         creation: serverTimestamp(),
       });
+
+      // Update the event document to include the uid
+      await updateDoc(docRef, { uid: docRef.id });
+
       return { eventId: docRef.id };
     } catch (error) {
       return rejectWithValue(error);
@@ -68,15 +72,15 @@ export const createEvent = createAsyncThunk<CreateEventReturnType, CreateEventAr
   }
 );
 
-export const getEventsByHost = createAsyncThunk(
+export const getEventsByHost = createAsyncThunk<Event[], string>(
   "event/getEventsByHost",
-  async (uid: string, { dispatch, rejectWithValue }) => {
+  async (currentHost, { rejectWithValue }) => {
     try {
       // Create a query against the collection.
       const q = query(
         collection(FIREBASE_DB, "event"),
-        where("creatorHost", "==", uid),
-        orderBy("creation", "desc"),
+        where("creatorHost", "==", currentHost),
+        orderBy("creation", "desc")
       );
 
       const querySnapshot = await getDocs(q);
@@ -84,19 +88,18 @@ export const getEventsByHost = createAsyncThunk(
       // Map over the snapshot to get the array of events
       const events = querySnapshot.docs.map((doc) => {
         const data = doc.data();
-        const id = doc.id;
-        return { id, ...data } as Event;
+        const uid = doc.id;
+        return { uid, ...data } as Event;
       });
-      // Dispatch action to update the state. Replace `CURRENT_USER_EVENTS_UPDATE` with the actual action creator
-      dispatch({ type: "CURRENT_USER_EVENTS_UPDATE", payload: events });
 
       return events; // Return events as fulfilled payload
     } catch (error) {
       console.error("Failed to get events: ", error);
       return rejectWithValue(error);
     }
-  },
+  }
 );
+
 
 export const getAllEvents = createAsyncThunk(
   "event/getAllEvents",
@@ -113,8 +116,8 @@ export const getAllEvents = createAsyncThunk(
       // Map over the snapshot to get the array of events
       const events = querySnapshot.docs.map((doc) => {
         const data = doc.data();
-        const id = doc.id;
-        return { id, ...data } as Event;
+        const uid = doc.id;
+        return { uid, ...data } as Event;
       });
       // Dispatch action to update the state. Replace `All_EVENTS_UPDATE` with the actual action creator
       dispatch({ type: "All_EVENTS_UPDATE", payload: events });
@@ -271,6 +274,41 @@ export const getGuestListByEventId = createAsyncThunk(
   }
 );
 
+export const updateGuestListAfterScan = createAsyncThunk(
+  "event/updateGuestListAfterScan",
+  async ({ eventId, userId }: { eventId: string, userId: string }, { rejectWithValue }) => {
+    try {
+      // Create a reference to the event document
+      const eventDocRef = doc(FIREBASE_DB, "event", eventId);
+
+      // Fetch the document
+      const eventDocSnapshot = await getDoc(eventDocRef);
+
+      if (!eventDocSnapshot.exists()) {
+        throw new Error("Event not found");
+      }
+
+      // Update the guest list to decrement the ticket count for the user
+      const eventData = eventDocSnapshot.data() as Event;
+      const updatedGuestList = { ...eventData.guestList };
+
+      if (updatedGuestList[userId] && updatedGuestList[userId] > 0) {
+        updatedGuestList[userId] -= 1;
+        await updateDoc(eventDocRef, {
+          guestList: updatedGuestList,
+        });
+        return { eventId, guestList: updatedGuestList };
+      } else {
+        throw new Error("User has no tickets left to scan");
+      }
+    } catch (error) {
+      console.error("Failed to update guest list: ", error);
+      return rejectWithValue(error);
+    }
+  }
+);
+
+
 const eventSlice = createSlice({
   name: "event",
   initialState,
@@ -390,9 +428,22 @@ const eventSlice = createSlice({
       .addCase(getGuestListByEventId.rejected, (state, action) => {
         state.loading = false;
         state.error = action.error.message || null;
+      })
+      .addCase(updateGuestListAfterScan.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(updateGuestListAfterScan.fulfilled, (state) => {
+        state.loading = false;
+        state.error = null;
+      })
+      .addCase(updateGuestListAfterScan.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error.message || null;
       });
   },
 });
 
 export default eventSlice.reducer;
+
 

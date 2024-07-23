@@ -41,7 +41,7 @@ const MyTicketsScreen = ({ route }: MyTicktsProps) => {
       {!loading && !error && (
         <FlatList
           data={tickets}
-          keyExtractor={(item) => item.id}
+          keyExtractor={(item) => item.uid}
           renderItem={({ item }) => (
             <TouchableOpacity onPress={() => handleItemPress(item)}>
               <Text style={styles.item}>{item.eventName}</Text>

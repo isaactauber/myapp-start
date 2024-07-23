@@ -19,7 +19,7 @@ const styles = StyleSheet.create({
     color: "#333",
   },
   descriptionInput: {
-    height: 120,
+    height: 50,
     textAlignVertical: "top",
   },
   buttonsContainer: {

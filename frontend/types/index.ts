@@ -1,6 +1,6 @@
 export interface Post {
+  uid: string;
   description: string;
-  id: string;
   creatorUser: string;
   creatorHost: string;
   media: string[];
@@ -11,7 +11,7 @@ export interface Post {
 }
 
 export interface Event {
-  id: string;
+  uid: string;
   creatorUser: string;
   creatorHost: string;
   eventName: string;
@@ -27,17 +27,18 @@ export interface Event {
 }
 
 export interface Ticket {
-  id: string;
+  uid: string;
   eventId: string;
   eventName: string;
   userID: string;
   uniqueEventId: string;
   timestamp: Date;
   qrCodeData: string;
+  isScanned: boolean;
 }
 
 export interface Host {
-  id: string;
+  uid: string;
   creator: string;
   hostName: string;
   hostType: string;

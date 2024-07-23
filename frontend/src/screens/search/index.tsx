@@ -51,13 +51,13 @@ export default function SearchScreen({ route }: SearchScreenProps) {
       <FlatList
         data={events}
         renderItem={({ item }) => (
-          <TouchableOpacity onPress={() => handleSelectEvent(item.id)}>
+          <TouchableOpacity onPress={() => handleSelectEvent(item.uid)}>
             <View style={styles.itemContainer}>
               <Text style={styles.itemText}>{item.eventName}</Text>
             </View>
           </TouchableOpacity>
         )}
-        keyExtractor={(item) => item.id}
+        keyExtractor={(item) => item.uid}
       />
       {/* <FlatList
         data={searchUsers}

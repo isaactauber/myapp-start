@@ -51,7 +51,7 @@ export default function SwitchViewScreen({ route }: SwitchViewScreenProps) {
       getHostsByUserId(user?.uid).then((hosts) => {
         setUserHosts(hosts);
         if (hosts.length > 0) {
-          setEventHost(hosts[0].id);
+          setEventHost(hosts[0].uid);
         }
       });
       setUserId(user?.uid);
@@ -67,7 +67,7 @@ export default function SwitchViewScreen({ route }: SwitchViewScreenProps) {
         style={styles.inputText}
       >
         {userHosts.map((host, index) => (
-          <Picker.Item key={index} label={host.hostName} value={host.id} />
+          <Picker.Item key={index} label={host.hostName} value={host.uid} />
         ))}
       </Picker>
       <View style={styles.buttonsContainer}>

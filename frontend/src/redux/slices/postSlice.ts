@@ -6,6 +6,7 @@ import {
   orderBy,
   query,
   serverTimestamp,
+  updateDoc,
   where,
 } from "firebase/firestore";
 import { saveMediaToStorage } from "../../services/utils";
@@ -90,8 +91,8 @@ export const getPostsByHost = createAsyncThunk(
       // Map over the snapshot to get the array of posts
       const posts = querySnapshot.docs.map((doc) => {
         const data = doc.data();
-        const id = doc.id;
-        return { id, ...data } as Post;
+        const uid = doc.id;
+        return { uid, ...data } as Post;
       });
       // Dispatch action to update the state. Replace `CURRENT_HOST_POSTS_UPDATE` with the actual action creator
       dispatch({ type: "CURRENT_HOST_POSTS_UPDATE", payload: posts });

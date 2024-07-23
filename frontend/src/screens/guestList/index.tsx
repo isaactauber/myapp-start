@@ -4,8 +4,9 @@ import { HostViewStackParamList } from '../../navigation/host';
 import { RouteProp } from '@react-navigation/native';
 import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, RootState } from '../../redux/store';
-import { getEventsByHost, getGuestListByEventId } from '../../redux/slices/eventSlice';
+import { getEventsByHost, getGuestListByEventId, updateGuestListAfterScan } from '../../redux/slices/eventSlice';
 import styles from './styles';
+import QRScannerModal from '../../components/qr';
 
 interface GuestListsProps {
   route: RouteProp<HostViewStackParamList, "guestLists">;
@@ -17,6 +18,8 @@ const GuestListsScreen = ({ route }: GuestListsProps) => {
   const events = useSelector((state: RootState) => state.event.currentHostEvents);
   const [guestList, setGuestList] = useState<Record<string, number> | null>(null);
   const [modalVisible, setModalVisible] = useState(false);
+  const [qrScannerVisible, setQrScannerVisible] = useState(false);
+  const [selectedEventId, setSelectedEventId] = useState<string | null>(null);
 
   useEffect(() => {
     dispatch(getEventsByHost(currentHost));
@@ -26,6 +29,7 @@ const GuestListsScreen = ({ route }: GuestListsProps) => {
     const resultAction = await dispatch(getGuestListByEventId(eventId));
     if (getGuestListByEventId.fulfilled.match(resultAction)) {
       setGuestList(resultAction.payload);
+      setSelectedEventId(eventId);
       setModalVisible(true);
     } else {
       Alert.alert("Error", "Failed to fetch guest list");
@@ -35,6 +39,27 @@ const GuestListsScreen = ({ route }: GuestListsProps) => {
   const handleCloseModal = () => {
     setModalVisible(false);
     setGuestList(null);
+    setSelectedEventId(null);
+  };
+
+  const handleScanTickets = () => {
+    setQrScannerVisible(true);
+    setModalVisible(false);
+  };
+
+  const handleQrScannerClose = () => {
+    setQrScannerVisible(false);
+  };
+
+  const handleConfirmScan = async (ticketUserId: string) => {
+    if (selectedEventId) {
+      const resultAction = await dispatch(updateGuestListAfterScan({ eventId: selectedEventId, userId: ticketUserId }));
+      if (updateGuestListAfterScan.fulfilled.match(resultAction)) {
+        Alert.alert("Success", "Ticket scan confirmed.");
+      } else {
+        Alert.alert("Error", "Failed to update guest list.");
+      }
+    }
   };
 
   return (
@@ -42,9 +67,9 @@ const GuestListsScreen = ({ route }: GuestListsProps) => {
       {events && (
         <FlatList
           data={events}
-          keyExtractor={(item) => item.id}
+          keyExtractor={(item) => item.uid}
           renderItem={({ item }) => (
-            <TouchableOpacity onPress={() => handleEventPress(item.id)}>
+            <TouchableOpacity onPress={() => handleEventPress(item.uid)}>
               <Text style={styles.item}>{item.eventName}</Text>
             </TouchableOpacity>
           )}
@@ -68,11 +93,19 @@ const GuestListsScreen = ({ route }: GuestListsProps) => {
                   <Text style={styles.guestItem}>{`User ID: ${userId}, Tickets: ${tickets}`}</Text>
                 )}
               />
+              <Button title="Scan Tickets" onPress={handleScanTickets} />
               <Button title="Close" onPress={handleCloseModal} />
             </View>
           </View>
         </Modal>
       )}
+
+      <QRScannerModal
+        visible={qrScannerVisible}
+        onClose={handleQrScannerClose}
+        eventId={selectedEventId}
+        onConfirm={handleConfirmScan}
+      />
     </View>
   );
 };
