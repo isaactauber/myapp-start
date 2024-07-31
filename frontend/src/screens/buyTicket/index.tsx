@@ -30,7 +30,7 @@ export default function BuyTicketScreen({ route }: BuyTicketProps) {
       }
     };
     fetchAvailableTickets(eventId);
-  }, [dispatch]);
+  }, [dispatch, eventId]);
 
   const handleCreateTicket = async () => {
     if (ticketsToBuy < 1 || ticketsToBuy > availableTickets) {
@@ -52,7 +52,7 @@ export default function BuyTicketScreen({ route }: BuyTicketProps) {
       }
     }
 
-    await dispatch(updateAvailableTickets({ eventId, numberOfTickets: availableTickets - ticketsToBuy }));
+    await dispatch(updateAvailableTickets({ eventId, ticketsToBuy }));
 
     await dispatch(appendToGuestList({ eventId, userId, ticketsToBuy }));
 

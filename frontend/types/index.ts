@@ -20,9 +20,9 @@ export interface Event {
   description: string;
   location: string;
   creation: string;
-  guestList: Record<string, number>;
-  // TODO change to totalTickets and ticketsSold
+  guestList: Record<string, [number, number]>; // [number of tickets purchased, number of tickets scanned]
   availableTickets: number;
+  soldTickets: number;
   //TODO `maxTicketsPerPerson: number
 }
 

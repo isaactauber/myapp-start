@@ -58,7 +58,8 @@ export const createEvent = createAsyncThunk<CreateEventReturnType, CreateEventAr
         eventType,
         location,
         availableTickets,
-        guestList: [],
+        soldTickets: 0,
+        guestList: {},
         creation: serverTimestamp(),
       });
 
@@ -99,7 +100,6 @@ export const getEventsByHost = createAsyncThunk<Event[], string>(
     }
   }
 );
-
 
 export const getAllEvents = createAsyncThunk(
   "event/getAllEvents",
@@ -144,15 +144,16 @@ export const getAvailableTicketsByEvent = createAsyncThunk(
         throw new Error("Event not found");
       }
 
-      // Extract the availableTickets field from the document data
+      // Extract the availableTickets and soldTickets fields from the document data
       const eventData = eventDocSnapshot.data();
       const availableTickets = eventData?.availableTickets;
+      const soldTickets = eventData?.soldTickets;
 
-      if (availableTickets === undefined) {
-        throw new Error("availableTickets field not found in the event document");
+      if (availableTickets === undefined || soldTickets === undefined) {
+        throw new Error("availableTickets or soldTickets field not found in the event document");
       }
 
-      return availableTickets; // Return availableTickets as fulfilled payload
+      return availableTickets - soldTickets; // Return remaining tickets as fulfilled payload
     } catch (error) {
       console.error("Failed to get available tickets: ", error);
       return rejectWithValue(error);
@@ -187,7 +188,7 @@ export const getEventById = createAsyncThunk(
 
 export const updateAvailableTickets = createAsyncThunk(
   "event/updateAvailableTickets",
-  async ({ eventId, numberOfTickets }: { eventId: string, numberOfTickets: number }, { rejectWithValue }) => {
+  async ({ eventId, ticketsToBuy }: { eventId: string, ticketsToBuy: number }, { rejectWithValue }) => {
     try {
       // Create a reference to the event document
       const eventDocRef = doc(FIREBASE_DB, "event", eventId);
@@ -199,12 +200,13 @@ export const updateAvailableTickets = createAsyncThunk(
         throw new Error("Event not found");
       }
 
-      // Update the availableTickets field
+      // Update the soldTickets field
+      const eventData = eventDocSnapshot.data() as Event;
       await updateDoc(eventDocRef, {
-        availableTickets: numberOfTickets,
+        soldTickets: eventData.soldTickets + ticketsToBuy,
       });
 
-      return { eventId, numberOfTickets };
+      return { eventId, ticketsToBuy };
     } catch (error) {
       console.error("Failed to update available tickets: ", error);
       return rejectWithValue(error);
@@ -231,9 +233,9 @@ export const appendToGuestList = createAsyncThunk(
       const updatedGuestList = { ...eventData.guestList };
 
       if (updatedGuestList[userId]) {
-        updatedGuestList[userId] += ticketsToBuy;
+        updatedGuestList[userId][0] += ticketsToBuy;
       } else {
-        updatedGuestList[userId] = ticketsToBuy;
+        updatedGuestList[userId] = [ticketsToBuy, 0];
       }
 
       await updateDoc(eventDocRef, {
@@ -288,18 +290,18 @@ export const updateGuestListAfterScan = createAsyncThunk(
         throw new Error("Event not found");
       }
 
-      // Update the guest list to decrement the ticket count for the user
+      // Update the guest list to increment the scanned ticket count for the user
       const eventData = eventDocSnapshot.data() as Event;
       const updatedGuestList = { ...eventData.guestList };
 
-      if (updatedGuestList[userId] && updatedGuestList[userId] > 0) {
-        updatedGuestList[userId] -= 1;
+      if (updatedGuestList[userId] && updatedGuestList[userId][0] > updatedGuestList[userId][1]) {
+        updatedGuestList[userId][1] += 1;
         await updateDoc(eventDocRef, {
           guestList: updatedGuestList,
         });
         return { eventId, guestList: updatedGuestList };
       } else {
-        throw new Error("User has no tickets left to scan");
+        throw new Error("User has no tickets left to scan or all tickets are already scanned");
       }
     } catch (error) {
       console.error("Failed to update guest list: ", error);
@@ -307,7 +309,6 @@ export const updateGuestListAfterScan = createAsyncThunk(
     }
   }
 );
-
 
 const eventSlice = createSlice({
   name: "event",
@@ -420,7 +421,7 @@ const eventSlice = createSlice({
       })
       .addCase(
         getGuestListByEventId.fulfilled,
-        (state, action: PayloadAction<Record<string, number>>) => {
+        (state, action: PayloadAction<Record<string, [number, number]>>) => {
           state.loading = false;
           // You can handle the guest list data here if needed
         },
@@ -445,5 +446,3 @@ const eventSlice = createSlice({
 });
 
 export default eventSlice.reducer;
-
-

@@ -7,6 +7,7 @@ import { AppDispatch, RootState } from '../../redux/store';
 import { getEventsByHost, getGuestListByEventId, updateGuestListAfterScan } from '../../redux/slices/eventSlice';
 import styles from './styles';
 import QRScannerModal from '../../components/qr';
+import { getUserDetailsById } from '../../redux/slices/userSlice';
 
 interface GuestListsProps {
   route: RouteProp<HostViewStackParamList, "guestLists">;
@@ -16,7 +17,8 @@ const GuestListsScreen = ({ route }: GuestListsProps) => {
   const currentHost = route.params.currentHost;
   const dispatch: AppDispatch = useDispatch();
   const events = useSelector((state: RootState) => state.event.currentHostEvents);
-  const [guestList, setGuestList] = useState<Record<string, number> | null>(null);
+  const userMap = useSelector((state: RootState) => state.user.users);
+  const [guestList, setGuestList] = useState<Record<string, [number, number]> | null>(null);
   const [modalVisible, setModalVisible] = useState(false);
   const [qrScannerVisible, setQrScannerVisible] = useState(false);
   const [selectedEventId, setSelectedEventId] = useState<string | null>(null);
@@ -26,12 +28,26 @@ const GuestListsScreen = ({ route }: GuestListsProps) => {
   }, [dispatch, currentHost]);
 
   const handleEventPress = async (eventId: string) => {
-    const resultAction = await dispatch(getGuestListByEventId(eventId));
-    if (getGuestListByEventId.fulfilled.match(resultAction)) {
-      setGuestList(resultAction.payload);
-      setSelectedEventId(eventId);
-      setModalVisible(true);
-    } else {
+    try {
+      const resultAction = await dispatch(getGuestListByEventId(eventId));
+      if (getGuestListByEventId.fulfilled.match(resultAction)) {
+        const guestList = resultAction.payload;
+        setGuestList(guestList);
+        setSelectedEventId(eventId);
+
+        // Fetch user names based on user IDs in the guest list
+        const userIds = Object.keys(guestList);
+        for (const userId of userIds) {
+          console.log(`Fetching user details for user ID: ${userId}`);
+          await dispatch(getUserDetailsById(userId));
+        }
+
+        setModalVisible(true);
+      } else {
+        Alert.alert("Error", "Failed to fetch guest list");
+      }
+    } catch (error) {
+      console.error("Error fetching guest list: ", error);
       Alert.alert("Error", "Failed to fetch guest list");
     }
   };
@@ -53,10 +69,15 @@ const GuestListsScreen = ({ route }: GuestListsProps) => {
 
   const handleConfirmScan = async (ticketUserId: string) => {
     if (selectedEventId) {
-      const resultAction = await dispatch(updateGuestListAfterScan({ eventId: selectedEventId, userId: ticketUserId }));
-      if (updateGuestListAfterScan.fulfilled.match(resultAction)) {
-        Alert.alert("Success", "Ticket scan confirmed.");
-      } else {
+      try {
+        const resultAction = await dispatch(updateGuestListAfterScan({ eventId: selectedEventId, userId: ticketUserId }));
+        if (updateGuestListAfterScan.fulfilled.match(resultAction)) {
+          Alert.alert("Success", "Ticket scan confirmed.");
+        } else {
+          Alert.alert("Error", "Failed to update guest list.");
+        }
+      } catch (error) {
+        console.error("Error updating guest list after scan: ", error);
         Alert.alert("Error", "Failed to update guest list.");
       }
     }
@@ -86,13 +107,17 @@ const GuestListsScreen = ({ route }: GuestListsProps) => {
           <View style={styles.modalContainer}>
             <View style={styles.modalContent}>
               <Text style={styles.modalTitle}>Guest List</Text>
-              <FlatList
-                data={Object.entries(guestList)}
-                keyExtractor={([userId]) => userId}
-                renderItem={({ item: [userId, tickets] }) => (
-                  <Text style={styles.guestItem}>{`User ID: ${userId}, Tickets: ${tickets}`}</Text>
-                )}
-              />
+              {Object.keys(guestList).length === 0 ? (
+                <Text style={styles.guestItem}>Guest list empty</Text>
+              ) : (
+                <FlatList
+                  data={Object.entries(guestList)}
+                  keyExtractor={([userId]) => userId}
+                  renderItem={({ item: [userId, [purchasedTickets, scannedTickets]] }) => (
+                    <Text style={styles.guestItem}>{` - ${userMap[userId]?.email || userMap[userId]?.name || userId}, Tickets Purchased: ${purchasedTickets}, Tickets Scanned: ${scannedTickets}`}</Text>
+                  )}
+                />
+              )}
               <Button title="Scan Tickets" onPress={handleScanTickets} />
               <Button title="Close" onPress={handleCloseModal} />
             </View>
