@@ -27,6 +27,7 @@ export default function SaveEventDetailsScreen({ route }: SaveEventDetailsProps)
   const [description, setDescription] = useState('');
   const [eventType, setEventType] = useState('');
   const [location, setLocation] = useState('');
+  const [availableTickets, setAvailableTickets] = useState<number>(0);
   let dateTimes: Date[] = [];
   const navigation = useNavigation<NativeStackNavigationProp<MainStackParamList>>();
 
@@ -34,7 +35,22 @@ export default function SaveEventDetailsScreen({ route }: SaveEventDetailsProps)
     const currentHost = route.params.currentHost;
     const source = route.params.source;
     const sourceThumb = route.params.sourceThumb;
-    navigation.navigate("saveEventDateTime", { currentHost, source, sourceThumb, name, description, eventType, location, dateTimes });
+    navigation.navigate("saveEventDateTime", { 
+      currentHost, 
+      source, 
+      sourceThumb, 
+      name, 
+      description, 
+      eventType, 
+      location, 
+      availableTickets: availableTickets || 0, 
+      dateTimes 
+    });
+  };
+
+  const handleTicketsChange = (text: string) => {
+    const numericValue = text.replace(/[^0-9]/g, '');
+    setAvailableTickets(numericValue === '' ? 0 : parseInt(numericValue, 10));
   };
 
   return (
@@ -63,9 +79,9 @@ export default function SaveEventDetailsScreen({ route }: SaveEventDetailsProps)
         onValueChange={(itemValue) => setEventType(itemValue)}
         style={styles.inputText}
       >
-      {Object.values(EventTypes).filter((value) => typeof value === 'string').map((value) => (
-        <Picker.Item key={value} label={value.toString()} value={value} />
-      ))}
+        {Object.values(EventTypes).filter((value) => typeof value === 'string').map((value) => (
+          <Picker.Item key={value} label={value.toString()} value={value} />
+        ))}
       </Picker>
 
       <GooglePlacesAutocomplete
@@ -78,6 +94,15 @@ export default function SaveEventDetailsScreen({ route }: SaveEventDetailsProps)
           key: 'AIzaSyAN9ZnOOX2Qb21Xuq6LcY1nZ8MV_hwq34c',
           language: 'en',
         }}
+      />
+
+      <TextInput
+        style={styles.inputText}
+        value={availableTickets !== 0 ? availableTickets.toString() : ''}
+        onChangeText={handleTicketsChange}
+        placeholder="Number of Available Tickets"
+        placeholderTextColor="#666"
+        keyboardType="numeric"
       />
       
       <View style={styles.buttonsContainer}>

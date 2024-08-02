@@ -5,6 +5,8 @@ import modalSlice from "./slices/modalSlice";
 import chatSlice from "./slices/chatSlice";
 import hostSlice from "./slices/hostSlice";
 import eventSlice from "./slices/eventSlice";
+import ticketSlice from "./slices/ticketSlice";
+import userSlice from "./slices/userSlice";
 
 export const store = configureStore({
   reducer: {
@@ -14,6 +16,8 @@ export const store = configureStore({
     event: eventSlice,
     modal: modalSlice,
     chat: chatSlice,
+    ticket: ticketSlice,
+    user: userSlice,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({

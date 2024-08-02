@@ -6,6 +6,7 @@ import {
   orderBy,
   query,
   serverTimestamp,
+  updateDoc,
   where,
 } from "firebase/firestore";
 import { PayloadAction, createAsyncThunk, createSlice } from "@reduxjs/toolkit";
@@ -49,6 +50,9 @@ export const createHost = createAsyncThunk<CreateHostReturnType, CreateHostArgs>
         creation: serverTimestamp(),
       });
 
+      // Update the event document to include the uid
+      await updateDoc(docRef, { uid: docRef.id });
+
       return { hostId: docRef.id };
     } catch (error) {
       return rejectWithValue(error);
@@ -72,8 +76,8 @@ export const getHostByUser = createAsyncThunk(
       // Map over the snapshot to get the array of host
       const hosts = querySnapshot.docs.map((doc) => {
         const data = doc.data();
-        const id = doc.id;
-        return { id, ...data } as Host;
+        const uid = doc.id;
+        return { uid, ...data } as Host;
       });
       // Dispatch action to update the state. Replace `CURRENT_USER_COMPANIES_UPDATE` with the actual action creator
       dispatch({ type: "CURRENT_USER_COMPANIES_UPDATE", payload: hosts });

@@ -1,6 +1,6 @@
 export interface Post {
+  uid: string;
   description: string;
-  id: string;
   creatorUser: string;
   creatorHost: string;
   media: string[];
@@ -11,19 +11,34 @@ export interface Post {
 }
 
 export interface Event {
-  id: string;
+  uid: string;
   creatorUser: string;
   creatorHost: string;
-  name: string;
+  eventName: string;
   eventType: string;
   dateTimes: Date[];
   description: string;
   location: string;
   creation: string;
+  guestList: Record<string, [number, number]>; // [number of tickets purchased, number of tickets scanned]
+  availableTickets: number;
+  soldTickets: number;
+  //TODO `maxTicketsPerPerson: number
+}
+
+export interface Ticket {
+  uid: string;
+  eventId: string;
+  eventName: string;
+  userID: string;
+  uniqueEventId: string;
+  timestamp: Date;
+  qrCodeData: string;
+  isScanned: boolean;
 }
 
 export interface Host {
-  id: string;
+  uid: string;
   creator: string;
   hostName: string;
   hostType: string;

@@ -1,6 +1,5 @@
 import { createMaterialBottomTabNavigator } from "@react-navigation/material-bottom-tabs";
 import { Feather } from "@expo/vector-icons";
-import ProfileScreen from "../../screens/profile";
 import SearchScreen from "../../screens/search";
 import FeedNavigation from "../feed";
 import { FIREBASE_AUTH } from "../../../firebaseConfig";
@@ -11,7 +10,7 @@ import UserProfileScreen from "../../screens/userProfile";
 
 export type UserViewStackParamList = {
   feed: undefined;
-  search: undefined;
+  search: { initialUserId: string };
   switchView: { initialUserId: string };
   myTickets: { initialUserId: string };
   profile: { initialUserId: string };
@@ -45,6 +44,7 @@ export default function UserViewScreen() {
             <Feather name="search" size={24} color={color} />
           ),
         }}
+        initialParams={{ initialUserId: FIREBASE_AUTH.currentUser?.uid ?? "" }}
       />
       <Tab.Screen
         name="switchView"
@@ -64,6 +64,7 @@ export default function UserViewScreen() {
             <Feather name="message-square" size={24} color={color} />
           ),
         }}
+        initialParams={{ initialUserId: FIREBASE_AUTH.currentUser?.uid ?? "" }}
       />
       <Tab.Screen
         name="profile"

@@ -4,9 +4,8 @@ import {
   Text,
   TouchableOpacity,
   View,
-  Platform,
 } from "react-native";
-import DateTimePicker from "@react-native-community/datetimepicker";
+import DateTimePickerModal from "react-native-modal-datetime-picker";
 import styles from "./styles";
 import { Feather } from "@expo/vector-icons";
 import { useDispatch } from "react-redux";
@@ -30,9 +29,8 @@ interface CreateEventReturnType {
 export default function SaveEventDateTime({ route }: SaveEventDateTimeProps) {
   const [date, setDate] = useState(new Date());
   const [requestRunning, setRequestRunning] = useState(false);
-  const [showDatePicker, setShowDatePicker] = useState(false);
+  const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
   const [dateTimes, setDateTimes] = useState<Date[]>([]);
-
 
   const hostNavigation = useNavigation<NativeStackNavigationProp<HostViewStackParamList>>();
   const rootNavigation = useNavigation<NativeStackNavigationProp<MainStackParamList>>();
@@ -42,7 +40,7 @@ export default function SaveEventDateTime({ route }: SaveEventDateTimeProps) {
     try {
       setRequestRunning(true);
       setDateTimes(route.params.dateTimes.concat(date));
-      
+
       // Dispatch createEvent and assert the return type
       const actionResult = await dispatch(
         createEvent({
@@ -51,7 +49,8 @@ export default function SaveEventDateTime({ route }: SaveEventDateTimeProps) {
           description: route.params.description,
           dateTimes: dateTimes,
           eventType: route.params.eventType,
-          location: route.params.location
+          location: route.params.location,
+          availableTickets: route.params.availableTickets,
         })
       );
       // Use a type guard to safely access the payload
@@ -74,33 +73,37 @@ export default function SaveEventDateTime({ route }: SaveEventDateTimeProps) {
       setRequestRunning(false);
     }
   };
-  
-  // TODO: I dont think handing date times is working correctly
+
+  // TODO: I don't think handling date times is working correctly
   const handleAddAnotherDate = () => {
     if (route.params.dateTimes)
       setDateTimes(route.params.dateTimes.concat(date));
     else
       setDateTimes([date]);
-    rootNavigation.navigate("saveEventDateTime", { 
+    rootNavigation.navigate("saveEventDateTime", {
       currentHost: route.params.currentHost,
-      source: route.params.source, 
+      source: route.params.source,
       sourceThumb: route.params.sourceThumb,
       name: route.params.name,
       description: route.params.description,
       eventType: route.params.eventType,
       location: route.params.location,
-      dateTimes: dateTimes });
+      availableTickets: route.params.availableTickets,
+      dateTimes: dateTimes
+    });
   };
 
-  const onChange = (event: any, selectedDate?: Date) => {
-    const currentDate = selectedDate || date;
-    setShowDatePicker(Platform.OS === 'ios');
-    setDate(currentDate);
-};
+  const handleConfirm = (selectedDate: Date) => {
+    setDate(selectedDate);
+    setDatePickerVisibility(false);
+  };
 
+  const showDatePicker = () => {
+    setDatePickerVisibility(true);
+  };
 
-  const showDatepicker = () => {
-    setShowDatePicker(true);
+  const hideDatePicker = () => {
+    setDatePickerVisibility(false);
   };
 
   if (requestRunning) {
@@ -113,19 +116,16 @@ export default function SaveEventDateTime({ route }: SaveEventDateTimeProps) {
   return (
     <View style={styles.container}>
       <View>
-        <TouchableOpacity onPress={showDatepicker} style={styles.datePickerButton}>
-            <Text>Select Date and Time</Text>
+        <TouchableOpacity onPress={showDatePicker} style={styles.datePickerButton}>
+          <Text style={styles.datePickerButtonText}>Select Date and Time</Text>
         </TouchableOpacity>
-        {showDatePicker && (
-            <DateTimePicker
-                testID="dateTimePicker"
-                value={date}
-                mode={"datetime"}
-                // is24Hour={true}
-                display="default"
-                onChange={onChange}
-            />
-        )}
+        <DateTimePickerModal
+          isVisible={isDatePickerVisible}
+          mode="datetime"
+          onConfirm={handleConfirm}
+          onCancel={hideDatePicker}
+          date={date}
+        />
       </View>
       <View style={styles.buttonsContainer}>
         <TouchableOpacity
@@ -137,7 +137,7 @@ export default function SaveEventDateTime({ route }: SaveEventDateTimeProps) {
         </TouchableOpacity>
 
         <TouchableOpacity
-          onPress={() => handleAddAnotherDate()}
+          onPress={handleAddAnotherDate}
           style={styles.postButton}
         >
           <Feather name="corner-left-up" size={24} color="blue" />
@@ -145,7 +145,7 @@ export default function SaveEventDateTime({ route }: SaveEventDateTimeProps) {
         </TouchableOpacity>
 
         <TouchableOpacity
-          onPress={() => handleSaveEvent()}
+          onPress={handleSaveEvent}
           style={styles.postButton}
         >
           <Feather name="corner-left-up" size={24} color="white" />
