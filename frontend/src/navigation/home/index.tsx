@@ -7,11 +7,12 @@ import FeedNavigation from "../feed";
 import { FIREBASE_AUTH } from "../../../firebaseConfig";
 import ChatScreen from "../../screens/chat/list";
 import { useChats } from "../../hooks/useChats";
+import SaveEventScreen from "../../screens/saveEvent";
 
 export type HomeStackParamList = {
   feed: undefined;
   Discover: undefined;
-  Add: undefined;
+  AddEvent: undefined;
   Inbox: undefined;
   Me: { initialUserId: string };
 };
@@ -46,7 +47,7 @@ export default function HomeScreen() {
         }}
       />
       <Tab.Screen
-        name="Add"
+        name="AddEvent"
         component={CameraScreen}
         options={{
           tabBarIcon: ({ color }) => (

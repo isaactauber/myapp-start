@@ -29,11 +29,11 @@ export const createPost = createAsyncThunk(
   "post/create",
   async (
     {
-      description,
+      event,
       video,
       thumbnail,
     }: {
-      description: string;
+      event: string;
       video: string;
       thumbnail: string;
     },
@@ -56,7 +56,7 @@ export const createPost = createAsyncThunk(
         await addDoc(collection(FIREBASE_DB, "post"), {
           creator: FIREBASE_AUTH.currentUser.uid,
           media: [videoDownloadUrl, thumbnailDownloadUrl],
-          description,
+          event,
           likesCount: 0,
           commentsCount: 0,
           creation: serverTimestamp(),
