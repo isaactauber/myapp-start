@@ -15,6 +15,14 @@ import { Post } from "../../../types";
 import { RouteProp } from "@react-navigation/native";
 import { RootStackParamList } from "../../navigation/main";
 import { HomeStackParamList } from "../../navigation/home";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import FeedScreen from "../feed";
+import EditProfileScreen from "./edit";
+import EditProfileFieldScreen from "./edit/field";
+import { FIREBASE_AUTH } from "../../../firebaseConfig";
+
+
+const Stack = createNativeStackNavigator<RootStackParamList>();
 
 type ProfileScreenRouteProp =
   | RouteProp<RootStackParamList, "profileOther">
@@ -49,13 +57,50 @@ export default function ProfileScreen({
     return <></>;
   }
 
+  const ProfileHome = () => {
+    return (
+      <SafeAreaView style={styles.container}>
+        <ProfileNavBar user={user} />
+        <ScrollView>
+          <ProfileHeader user={user} />
+          <ProfilePostList posts={userPosts} />
+        </ScrollView>
+      </SafeAreaView>
+    );
+  }
+
   return (
-    <SafeAreaView style={styles.container}>
-      <ProfileNavBar user={user} />
-      <ScrollView>
-        <ProfileHeader user={user} />
-        <ProfilePostList posts={userPosts} />
-      </ScrollView>
-    </SafeAreaView>
+    <Stack.Navigator
+      initialRouteName="profileHome"
+    >
+       <Stack.Screen
+         name="userPosts"
+         component={FeedScreen}
+         options={{ headerShown: false }}
+         initialParams={{ profile: true }}
+         />
+        <Stack.Screen
+          name="profileOther"
+          component={ProfileScreen}
+          options={{ headerShown: false }}
+          initialParams={{ initialUserId: user.uid }}
+        />
+        <Stack.Screen
+          name="editProfile"
+          component={EditProfileScreen}
+          options={{ headerShown: false }}
+         />
+        <Stack.Screen
+          name="editProfileField"
+          component={EditProfileFieldScreen}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="profileHome"
+          component={ProfileHome}
+          options={{ headerShown: false }}
+        />
+    </Stack.Navigator>
+    
   );
 }

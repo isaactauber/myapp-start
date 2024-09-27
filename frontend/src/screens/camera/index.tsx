@@ -98,7 +98,7 @@ export default function CameraScreen() {
       aspect: [16, 9],
       quality: 1,
     });
-    console.warn("sourceval {}", result.assets[0].uri);
+    // console.warn("sourceval {}", result.assets[0].uri);
     if (!result.canceled) {
       const sourceThumb = await generateThumbnail(result.assets[0].uri);
       if (sourceThumb) {
